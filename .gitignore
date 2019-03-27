@@ -4,3 +4,4 @@ target
 build
 dest
 test.yml
+.flattened-pom.xml

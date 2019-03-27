@@ -1,46 +1,45 @@
 package com.opsbears.cscanner.s3;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.RegionImpl;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GetBucketAclRequest;
 import com.amazonaws.services.s3.model.Grant;
 import com.amazonaws.services.s3.model.Permission;
+import com.opsbears.cscanner.core.CloudProvider;
 import com.opsbears.cscanner.core.Rule;
+import com.opsbears.cscanner.core.RuleResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @ParametersAreNonnullByDefault
-public class S3PublicReadProhibitedRule implements Rule {
-    private final AmazonS3 s3Client;
-    private final String connectionName;
+public class S3PublicReadProhibitedRule implements S3Rule {
     private final List<Pattern> include;
     private final List<Pattern> exclude;
 
     /**
-     * @param s3Client the AWS S3 client
      * @param include Regular expressions of buckets to include from this type.
      * @param exclude Regular expression of buckets to exclude from this type.
      */
     public S3PublicReadProhibitedRule(
-        AmazonS3 s3Client,
-        String connectionName,
         List<Pattern> include,
         List<Pattern> exclude
     ) {
-
-        this.s3Client = s3Client;
-        this.connectionName = connectionName;
         this.include = include;
         this.exclude = exclude;
     }
 
     @Override
-    public List<Result> evaluate() {
+    public List<RuleResult> evaluate(S3Connection s3Connection) {
+        S3Factory s3ClientFactory = s3Connection.getS3Factory();
+        AmazonS3 s3Client = s3ClientFactory.get(null);
         List<Bucket> buckets = s3Client.listBuckets();
-        List<Result> results = new ArrayList<>();
+        List<RuleResult> results = new ArrayList<>();
         for (Bucket bucket : buckets) {
             if (!include.isEmpty()) {
                 boolean includeMatches = false;
@@ -67,8 +66,12 @@ public class S3PublicReadProhibitedRule implements Rule {
                 }
             }
 
-            Compliancy compliancy = Compliancy.COMPLIANT;
-            List<Grant> grants = s3Client
+            RuleResult.Compliancy compliancy = RuleResult.Compliancy.COMPLIANT;
+
+            String region = s3Client.getBucketLocation(bucket.getName());
+            AmazonS3 secondaryS3Client = s3ClientFactory.get(region);
+
+            List<Grant> grants = secondaryS3Client
                 .getBucketAcl(
                     new GetBucketAclRequest(
                         bucket.getName()
@@ -86,12 +89,12 @@ public class S3PublicReadProhibitedRule implements Rule {
                         .getIdentifier()
                         .equalsIgnoreCase("http://acs.amazonaws.com/groups/global/AllUsers")
                 ) {
-                    compliancy = Compliancy.NONCOMPLIANT;
+                    compliancy = RuleResult.Compliancy.NONCOMPLIANT;
                 }
             }
             results.add(
-                new Result(
-                    connectionName,
+                new RuleResult(
+                    s3Connection.getConnectionName(),
                     "s3",
                     bucket.getName(),
                     compliancy

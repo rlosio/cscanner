@@ -6,7 +6,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public interface Plugin {
-    default List<ConnectionBuilder<?>> getSupportedConnections() {
+    default List<CloudProvider<?, ?>> getCloudProviders() {
         return Collections.emptyList();
     }
 

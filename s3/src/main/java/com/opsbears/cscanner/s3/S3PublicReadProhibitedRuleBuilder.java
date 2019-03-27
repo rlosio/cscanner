@@ -1,62 +1,62 @@
 package com.opsbears.cscanner.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.opsbears.cscanner.core.ConnectionBuilder;
 import com.opsbears.cscanner.core.RuleBuilder;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
-public class S3PublicReadProhibitedRuleBuilder implements RuleBuilder<S3PublicReadProhibitedRule, AmazonS3> {
+public class S3PublicReadProhibitedRuleBuilder implements RuleBuilder<S3PublicReadProhibitedRule, S3Connection> {
     @Override
     public String getType() {
         return "S3_PUBLIC_READ_PROHIBITED";
     }
 
     @Override
-    public Class<AmazonS3> getConnectionType() {
-        return AmazonS3.class;
+    public Class<S3Connection> getConnectionType() {
+        return S3Connection.class;
     }
 
     @Override
-    public S3PublicReadProhibitedRule create(
-        Map<String, Object> options,
-        String connectionName,
-        Supplier<AmazonS3> clientFactory
-    ) {
-        List<Pattern> include = new ArrayList<>();
+    public S3PublicReadProhibitedRule create(Map<String, Object> options) {
+        List<Pattern> includePatterns = new ArrayList<>();
         if (options.containsKey("include")) {
-            if (!(options.get("include") instanceof List)) {
-                throw new RuntimeException("The include option needs to be a list, " + options.get("include").getClass().getSimpleName() + " found.");
+            Object include = options.get("include");
+            if (!(include instanceof List)) {
+                throw new RuntimeException("The option 'include' should be a list, " + include.getClass().getSimpleName() + " given.");
             }
-            include = ((List<String>)options.get("include"))
-                .stream()
-                .map(Pattern::compile)
-                .collect(Collectors.toList());
+            List includeList = (List) include;
+
+            for (Object includeObject : includeList) {
+                if (!(includeObject instanceof String)) {
+                    throw new RuntimeException("The include rule should be a string, " + includeObject.getClass().getSimpleName() + " given.");
+                }
+                includePatterns.add(Pattern.compile((String)includeObject));
+            }
         }
 
-        List<Pattern> exclude = new ArrayList<>();
+        List<Pattern> excludePatterns = new ArrayList<>();
         if (options.containsKey("exclude")) {
-            if (!(options.get("exclude") instanceof List)) {
-                throw new RuntimeException("The exclude option needs to be a list, " + options.get("exclude").getClass().getSimpleName() + " found.");
+            Object exclude = options.get("exclude");
+            if (!(exclude instanceof List)) {
+                throw new RuntimeException("The option 'exclude' should be a list, " + exclude.getClass().getSimpleName() + " given.");
             }
-            exclude = ((List<String>)options.get("exclude"))
-                .stream()
-                .map(Pattern::compile)
-                .collect(Collectors.toList());
+            List excludeList = (List) exclude;
+
+            for (Object excludeObject : excludeList) {
+                if (!(excludeObject instanceof String)) {
+                    throw new RuntimeException("The exclude rule should be a string, " + excludeObject.getClass().getSimpleName() + " given.");
+                }
+                excludePatterns.add(Pattern.compile((String)excludeObject));
+            }
         }
 
         return new S3PublicReadProhibitedRule(
-            clientFactory.get(),
-            connectionName,
-            include,
-            exclude
+            includePatterns,
+            excludePatterns
         );
     }
 }

@@ -1,6 +1,8 @@
 package com.opsbears.cscanner.yaml;
 
 import com.opsbears.cscanner.core.ConfigLoader;
+import com.opsbears.cscanner.core.ConnectionConfiguration;
+import com.opsbears.cscanner.core.RuleConfiguration;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.parser.ParserException;
 

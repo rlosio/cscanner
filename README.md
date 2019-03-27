@@ -6,15 +6,29 @@ an AWS account to make sure there are no publicly readable S3 buckets, you can u
 ```yaml
 ---
 connections:
-  aws-s3:
-    type: s3
-    AWS_ACCESS_KEY_ID: ""
-    AWS_SECRET_ACCESS_KEY: ""
+  aws-test:
+    type: aws
+    accessKeyId: ""
+    secretAccessKey: ""
+  exoscale-test:
+    type: exoscale
+    key: ""
+    secret: ""
 rules:
   - type: S3_PUBLIC_READ_PROHIBITED
-    connections:
-      - aws-s3
+    include:
+      - .*
+    exclude:
+      - .*public.*
 
+```
+
+The result of the application will be like this:
+
+```
+exoscale-test	s3	opsbears-honeypot-terraform	COMPLIANT
+aws-test	s3	elasticbeanstalk-us-east-1-556933211225	COMPLIANT
+aws-test	s3	janoszen-access-test	NONCOMPLIANT
 ```
 
 It is very similar to AWSConfig in its intention, but it is designed from the ground up to support multiple cloud

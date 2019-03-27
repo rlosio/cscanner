@@ -1,6 +1,5 @@
 package com.opsbears.cscanner.s3;
 
-import com.opsbears.cscanner.core.ConnectionBuilder;
 import com.opsbears.cscanner.core.Plugin;
 import com.opsbears.cscanner.core.RuleBuilder;
 
@@ -10,13 +9,6 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class S3Plugin implements Plugin {
-    @Override
-    public List<ConnectionBuilder<?>> getSupportedConnections() {
-        return Arrays.asList(
-            new S3ConnectionBuilder()
-        );
-    }
-
     @Override
     public List<RuleBuilder<?, ?>> getSupportedRules() {
         //noinspection unchecked

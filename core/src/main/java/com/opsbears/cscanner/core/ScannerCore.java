@@ -1,11 +1,7 @@
 package com.opsbears.cscanner.core;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.*;
 
 @ParametersAreNonnullByDefault
 public class ScannerCore {
@@ -15,87 +11,86 @@ public class ScannerCore {
         this.plugins = plugins;
     }
 
-    public List<Rule.Result> scan() {
+    public List<RuleResult> scan() {
+        //region Plugins
         List<ConfigLoader> configLoaders = new ArrayList<>();
-        List<ConnectionBuilder<?>> connectionBuilders = new ArrayList<>();
+        List<CloudProvider<?, ?>> cloudProviders = new ArrayList<>();
         List<RuleBuilder<?, ?>> ruleBuilders = new ArrayList<>();
         for (Plugin plugin : plugins) {
             configLoaders.addAll(plugin.getConfigLoaders());
-            connectionBuilders.addAll(plugin.getSupportedConnections());
+            cloudProviders.addAll(plugin.getCloudProviders());
             ruleBuilders.addAll(plugin.getSupportedRules());
         }
+        //endregion
 
-        Map<String, ConfigLoader.ConnectionConfiguration> connectionConfigs = new HashMap<>();
-        List<ConfigLoader.RuleConfiguration> ruleConfigurations = new ArrayList<>();
+        //region Connection configuration
+        Map<String, ConnectionConfiguration> connectionConfigurations = new HashMap<>();
+        List<RuleConfiguration> ruleConfigurations = new ArrayList<>();
         for (ConfigLoader configLoader : configLoaders) {
-            connectionConfigs.putAll(configLoader.loadConnectionConfigurations());
+            connectionConfigurations.putAll(configLoader.loadConnectionConfigurations());
             ruleConfigurations.addAll(configLoader.loadRuleConfigurations());
         }
+        //endregion
 
-        Map<String, ConnectionBuilder<?>> connectionBuilderMap = new HashMap<>();
-        for (String connectionName : connectionConfigs.keySet()) {
-            ConfigLoader.ConnectionConfiguration connectionConfig = connectionConfigs.get(connectionName);
-            ConnectionBuilder<?> foundConnectionBuilder = null;
-            for (ConnectionBuilder<?> connectionBuilder : connectionBuilders) {
-                if (connectionBuilder.getType().equalsIgnoreCase(connectionConfig.type)) {
-                    foundConnectionBuilder = connectionBuilder;
-                    break;
-                }
-            }
-            if (foundConnectionBuilder == null) {
-                throw new RuntimeException("Unable to find connection builder for connection type " + connectionConfig.type + " in connection " + connectionName);
-            }
+        //region Cloud provider mapping
+        Map<String,CloudProvider<?, ?>> cloudProviderByConnectionKey = new HashMap<>();
+        Map<String, CloudProviderConnection> cloudProviderConnectionMap = new HashMap<>();
+        for (String connectionKey : connectionConfigurations.keySet()) {
+            ConnectionConfiguration connectionConfiguration = connectionConfigurations.get(connectionKey);
 
-            connectionBuilderMap.put(connectionName, foundConnectionBuilder);
+            Optional<CloudProvider<?, ?>> cloudProvider = cloudProviders.stream().filter(
+                cp -> cp.getName().equalsIgnoreCase(connectionConfiguration.type)
+            ).findFirst();
+
+            if (!cloudProvider.isPresent()) {
+                throw new RuntimeException("Cloud provider '" + connectionConfiguration.type + "' is not supported.");
+            }
+            cloudProviderByConnectionKey.put(connectionKey, cloudProvider.get());
+            cloudProviderConnectionMap.put(
+                connectionKey,
+                cloudProvider.get().getConnection(connectionKey, connectionConfigurations.get(connectionKey).options)
+            );
         }
+        //endregion
 
-        List<Rule> finalRuleList = new ArrayList<>();
-        for (ConfigLoader.RuleConfiguration ruleConfiguration : ruleConfigurations) {
+        //region Rules
+        List<RuleResult> result = new ArrayList<>();
+        for (RuleConfiguration ruleConfiguration : ruleConfigurations) {
             String ruleType = ruleConfiguration.type;
-            List<String> ruleConnectionNames = ruleConfiguration.connections;
+            List<String> ruleConnections = ruleConfiguration.connections;
             Map<String, Object> ruleOptions = ruleConfiguration.options;
 
-            RuleBuilder<?, ?> foundRuleBuilder = null;
-            for (RuleBuilder<?, ?> ruleBuilder : ruleBuilders) {
-                if (ruleBuilder.getType().equalsIgnoreCase(ruleType)) {
-                    foundRuleBuilder = ruleBuilder;
-                    break;
-                }
-            }
-            if (foundRuleBuilder == null) {
-                throw new RuntimeException("No rule builder found for rule type " + ruleType);
+            Optional<RuleBuilder<?, ?>> ruleBuilder = ruleBuilders
+                .stream()
+                .filter(rb -> rb.getType().equalsIgnoreCase(ruleType))
+                .findFirst();
+
+            if (!ruleBuilder.isPresent()) {
+                throw new RuntimeException("Rule type '" + ruleType + "' not supported.");
             }
 
-            if (ruleConnectionNames.isEmpty()) {
-                ruleConnectionNames.addAll(connectionBuilderMap.keySet());
+            if (ruleConnections.isEmpty()) {
+                ruleConnections.addAll(cloudProviderByConnectionKey.keySet());
             }
-            for (String connectionName : ruleConnectionNames) {
-                if (!connectionBuilderMap.containsKey(connectionName)) {
-                    throw new RuntimeException("No connection with name " + connectionName + " found");
+            Rule rule = ruleBuilder.get().create(ruleOptions);
+
+            for (String ruleConnection : ruleConnections) {
+                if (!cloudProviderByConnectionKey.containsKey(ruleConnection)) {
+                    throw new RuntimeException("No such connection: " + ruleConnection);
                 }
-                ConnectionBuilder<?> connectionBuilder = connectionBuilderMap.get(connectionName);
-                if (foundRuleBuilder.getConnectionType().equals(connectionBuilder.getConnectionType())) {
-                    //Purposefully left off generic
-                    Supplier connectionSupplier = connectionBuilder.create(
-                            connectionConfigs.get(connectionName).options
-                    );
-                    //noinspection unchecked
-                    finalRuleList.add(foundRuleBuilder.create(
-                        ruleOptions,
-                        connectionName,
-                        connectionSupplier
-                    ));
-                } else {
-                    //todo log invalid connection
+
+                CloudProvider<?, ?> connection = cloudProviderByConnectionKey.get(ruleConnection);
+                Class<?> connectionType = ruleBuilder.get().getConnectionType();
+                if (!connectionType.isAssignableFrom(connection.getConnectionType())) {
+                    //This connection does not support this type.
+                    continue;
                 }
+                //noinspection unchecked
+                result.addAll(rule.evaluate(cloudProviderConnectionMap.get(ruleConnection)));
             }
         }
+        //endregion
 
-        List<Rule.Result> results = new ArrayList<>();
-        for (Rule rule : finalRuleList) {
-            results.addAll(rule.evaluate());
-        }
-
-        return results;
+        return result;
     }
 }
