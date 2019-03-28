@@ -26,6 +26,11 @@ rules:
 You would then get a report detailing all your security groups across all your cloud providers and if they
 are compliant or are violating the rules.
 
+## Downloading
+
+At this time you will have to download [the source code](https://github.com/janoszen/cscanner) and compile it yourself 
+(see instructions below).
+
 ## Configuring
 
 The cloud scanner is configured using YAML files. The yaml files have two sections: `connections` and `rules`.

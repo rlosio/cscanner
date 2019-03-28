@@ -3,5 +3,6 @@
 target
 build
 dest
+site
 test.yml
 .flattened-pom.xml

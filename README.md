@@ -42,3 +42,5 @@ It is very similar to AWSConfig in its intention, but it is designed from the gr
 providers and accounts at once.
 
 Note that at this time it is very early in development, so use at your own risk.
+
+» [Read the full documentation at cscanner.io](https://cscanner.io)
