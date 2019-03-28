@@ -1,0 +1,12 @@
+---
+site_name: Janos' Cloud Scanner
+repo_url: https://github.com/janoszen/cscanner/
+theme: readthedocs
+nav:
+  - "Home:": 'index.md'
+  - "Cloud providers":
+      - "Amazon Web Services": "clouds/aws.md"
+      - "Exoscale": "clouds/exoscale.md"
+  - "Rules":
+      - "Firewall": "rules/firewall.md"
+      - "S3": "rules/s3.md"
