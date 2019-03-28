@@ -20,62 +20,7 @@ public class AWSS3ClientSupplier implements S3Factory {
     @Override
     public AmazonS3 get(@Nullable String region) {
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard();
-        if (configuration.accessKeyId != null && configuration.secretAccessKey != null) {
-            if (configuration.sessionToken != null) {
-                builder.withCredentials(new AWSSessionCredentialsProvider() {
-                    @Override
-                    public AWSSessionCredentials getCredentials() {
-                        return new AWSSessionCredentials() {
-                            @Override
-                            public String getSessionToken() {
-                                return configuration.sessionToken;
-                            }
-
-                            @Override
-                            public String getAWSAccessKeyId() {
-                                return configuration.accessKeyId;
-                            }
-
-                            @Override
-                            public String getAWSSecretKey() {
-                                return configuration.secretAccessKey;
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void refresh() {
-
-                    }
-                });
-            } else {
-                builder.withCredentials(new AWSCredentialsProvider() {
-                    @Override
-                    public AWSCredentials getCredentials() {
-                        return new AWSCredentials() {
-                            @Override
-                            public String getAWSAccessKeyId() {
-                                return configuration.accessKeyId;
-                            }
-
-                            @Override
-                            public String getAWSSecretKey() {
-                                return configuration.secretAccessKey;
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void refresh() {
-
-                    }
-                });
-            }
-        } else if (configuration.profile != null) {
-            builder.withCredentials(new ProfileCredentialsProvider(configuration.profile));
-        } else {
-            builder.withCredentials(new DefaultAWSCredentialsProviderChain());
-        }
+        builder.withCredentials(configuration.getCredentialsProvider());
 
         if (region != null) {
             builder.withRegion(region);

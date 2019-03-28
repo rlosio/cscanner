@@ -28,7 +28,7 @@ public class FirewallPublicServiceProhibitedRuleBuilder implements RuleBuilder<F
         }
         Object protocol = options.get("protocol");
         if (protocol instanceof String) {
-            protocol = Protocol.getProtocolByName((String) protocol);
+            protocol = Protocols.getInstance().getProtocolIdByName((String) protocol);
         } else if (!(protocol instanceof Integer)) {
             throw new RuntimeException("Invalid protocol definition type '" + protocol.getClass().getSimpleName() + "'");
         }

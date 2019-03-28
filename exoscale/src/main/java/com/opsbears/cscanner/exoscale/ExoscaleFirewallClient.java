@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import com.opsbears.cscanner.firewall.FirewallClient;
 import com.opsbears.cscanner.firewall.FirewallGroup;
 import com.opsbears.cscanner.firewall.FirewallRule;
+import com.opsbears.cscanner.firewall.Protocols;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class ExoscaleFirewallClient implements FirewallClient {
+    private final Protocols protocols = Protocols.getInstance();
     private final String apiKey;
     private final String apiSecret;
 
@@ -66,35 +68,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
         for (int i = 0; i < rules.size(); i++) {
             JsonObject rule = rules.get(i).getAsJsonObject();
 
-            int protocol;
-            switch(rule.get("protocol").getAsString()) {
-                case "tcp":
-                    protocol = 6;
-                    break;
-                case "udp":
-                    protocol = 17;
-                    break;
-                case "icmp":
-                    protocol = 1;
-                    break;
-                case "icmpv6":
-                    protocol = 58;
-                    break;
-                case "ah":
-                    protocol = 51;
-                    break;
-                case "esp":
-                    protocol = 50;
-                    break;
-                case "gre":
-                    protocol = 47;
-                    break;
-                case "ipip":
-                    protocol = 94;
-                    break;
-                default:
-                    throw new RuntimeException("Unsupported protocol: " + rule.get("protocol").getAsString());
-            }
+            int protocol = protocols.getProtocolIdByName(rule.get("protocol").getAsString());
             Integer fromPort = null;
             Integer toPort = null;
             Integer icmpType = null;
@@ -132,7 +106,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
                 FirewallRule.Rule.ALLOW
             ));
         }
-        if (direction == FirewallRule.Direction.INGRESS) {
+        if (direction == FirewallRule.Direction.EGRESS && rules.size() == 0) {
             firewallRules.add(new FirewallRule(
                 null,
                 null,
@@ -142,34 +116,8 @@ public class ExoscaleFirewallClient implements FirewallClient {
                 null,
                 null,
                 direction,
-                FirewallRule.Rule.DENY
+                FirewallRule.Rule.ALLOW
             ));
-        } else if (direction == FirewallRule.Direction.EGRESS) {
-            if (rules.size() == 0) {
-                firewallRules.add(new FirewallRule(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    direction,
-                    FirewallRule.Rule.ALLOW
-                ));
-            } else {
-                firewallRules.add(new FirewallRule(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    direction,
-                    FirewallRule.Rule.DENY
-                ));
-            }
         }
         return firewallRules;
     }

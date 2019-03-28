@@ -1,15 +1,15 @@
 package com.opsbears.cscanner.aws;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.opsbears.cscanner.core.CloudProviderConnection;
+import com.opsbears.cscanner.firewall.FirewallClient;
+import com.opsbears.cscanner.firewall.FirewallConnection;
 import com.opsbears.cscanner.s3.S3Connection;
 import com.opsbears.cscanner.s3.S3Factory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class AWSConnection implements CloudProviderConnection, S3Connection {
+public class AWSConnection implements CloudProviderConnection, S3Connection, FirewallConnection {
     private final String name;
     private final AWSConfiguration awsConfiguration;
 
@@ -29,5 +29,10 @@ public class AWSConnection implements CloudProviderConnection, S3Connection {
     @Override
     public String getConnectionName() {
         return name;
+    }
+
+    @Override
+    public FirewallClient getFirewallClient() {
+        return new AWSFirewallClient(awsConfiguration);
     }
 }
