@@ -33,7 +33,16 @@ At this time you will have to download [the source code](https://github.com/jano
 
 ## Configuring
 
-The cloud scanner is configured using YAML files. The yaml files have two sections: `connections` and `rules`.
+The cloud scanner is configured using YAML files. The yaml files have two sections: `connections` and `rules`. The
+layout looks roughly like this:
+
+```yaml
+---
+connections:
+  # Cloud provider connections go here
+rules:
+  # Compliance rules go here
+```
 
 In `connections` you configure your various cloud accounts, such as this:
 
