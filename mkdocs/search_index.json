@@ -1,0 +1,99 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "Janos' Cloud Scanner\n\n\n\n\nWarning!\n This project is very early in development and the API may change! \nFeel free to contribute!\n\n\n\n\nThis utility is intended to check your cloud configuration for compliance with your companies rules in an automated\nfashion, not unlike AWS config.\n\n\nFor example, if you want to make sure that your port 22 is never open to the world, across all your cloud providers,\nyou could do something like this:\n\n\nconnections:\n  # Configure your connections here\nrules:\n  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n    protocol: \"tcp\"\n    ports:\n      - 22\n\n\n\n\nYou would then get a report detailing all your security groups across all your cloud providers and if they\nare compliant or are violating the rules.\n\n\nConfiguring\n\n\nThe cloud scanner is configured using YAML files. The yaml files have two sections: \nconnections\n and \nrules\n.\n\n\nIn \nconnections\n you configure your various cloud accounts, such as this:\n\n\nexoscale-test:\n  type: exoscale\n  key: \"\"\n  secret: \"\"\n\n\n\n\nThe respective options for each cloud provider are documented in their documentation. The connection name can then \nreferenced with the rules.\n\n\nThe next section is the \nrules\n section, which you can specify your rules in:\n\n\n- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n  protocol: tcp\n  ports:\n    - 22\n\n\n\n\nEach rule has two universal parameters: \ntype\n to specify the rule type and \nconnections\n which you can use to\nlimit the rule to only certian connections. The default is to use all connections.\n\n\nIf a certain cloud provider doesn't support a specific functionality, that cloud provider will be simply skipped for\nthe specified rule.\n\n\nSupported cloud providers\n\n\nCurrently the following cloud providers are supported:\n\n\n\n\nAmazon Web Services\n\n\nExoscale\n\n\n\n\nSupported rules\n\n\nCurrently the following rule sets are supported:\n\n\n\n\nFirewall\n\n\nS3\n\n\n\n\nCompiling\n\n\nIf you want to compile the utility from source, you will need \nMaven\n. Using Maven and at least\na JDK compatible with Java 8 you should be able to simply run \nmvn package\n to compile the source code and then find\nthe compiled binaries in \ncli/target\n.\n\n\nRunning\n\n\nTo run the cscanner, simply point it to your config file:\n\n\njava -jar cli-master-SNAPSHOT-jar-with-dependencies.jar your-config-file.yaml",
+            "title": "Home"
+        },
+        {
+            "location": "/#janos-cloud-scanner",
+            "text": "Warning!  This project is very early in development and the API may change!  Feel free to contribute!   This utility is intended to check your cloud configuration for compliance with your companies rules in an automated\nfashion, not unlike AWS config.  For example, if you want to make sure that your port 22 is never open to the world, across all your cloud providers,\nyou could do something like this:  connections:\n  # Configure your connections here\nrules:\n  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n    protocol: \"tcp\"\n    ports:\n      - 22  You would then get a report detailing all your security groups across all your cloud providers and if they\nare compliant or are violating the rules.",
+            "title": "Janos' Cloud Scanner"
+        },
+        {
+            "location": "/#configuring",
+            "text": "The cloud scanner is configured using YAML files. The yaml files have two sections:  connections  and  rules .  In  connections  you configure your various cloud accounts, such as this:  exoscale-test:\n  type: exoscale\n  key: \"\"\n  secret: \"\"  The respective options for each cloud provider are documented in their documentation. The connection name can then \nreferenced with the rules.  The next section is the  rules  section, which you can specify your rules in:  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n  protocol: tcp\n  ports:\n    - 22  Each rule has two universal parameters:  type  to specify the rule type and  connections  which you can use to\nlimit the rule to only certian connections. The default is to use all connections.  If a certain cloud provider doesn't support a specific functionality, that cloud provider will be simply skipped for\nthe specified rule.",
+            "title": "Configuring"
+        },
+        {
+            "location": "/#supported-cloud-providers",
+            "text": "Currently the following cloud providers are supported:   Amazon Web Services  Exoscale",
+            "title": "Supported cloud providers"
+        },
+        {
+            "location": "/#supported-rules",
+            "text": "Currently the following rule sets are supported:   Firewall  S3",
+            "title": "Supported rules"
+        },
+        {
+            "location": "/#compiling",
+            "text": "If you want to compile the utility from source, you will need  Maven . Using Maven and at least\na JDK compatible with Java 8 you should be able to simply run  mvn package  to compile the source code and then find\nthe compiled binaries in  cli/target .",
+            "title": "Compiling"
+        },
+        {
+            "location": "/#running",
+            "text": "To run the cscanner, simply point it to your config file:  java -jar cli-master-SNAPSHOT-jar-with-dependencies.jar your-config-file.yaml",
+            "title": "Running"
+        },
+        {
+            "location": "/rules/firewall/",
+            "text": "Firewall rules\n\n\nThis section details how to configure the firewall compliance rules.\n\n\nDo not permit a certain port to be public\n\n\nThis rule fails if there is a firewall rule allowing access to a certain port from the whole internet (\n0.0.0.0/0\n or\n\n::/0\n). The configuration is as follows:\n\n\n- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n  protocol: tcp\n  ports:\n    - 22\n  include:\n    - some.*regexp\n  exclude:\n    - public\n\n\n\n\nprotocol\n\n\nThis option specifies the protocol, either as a name or a number. It accepts only a single protocol.\n\n\nports\n\n\nThis option accepts a list of ports that should be checked.\n\n\ninclude\n\n\nThis option accepts a regular expression to match against the security group name. If include is specified, only\nthe security groups with the specified name will be considered.\n\n\nNote that each cloud provider implements security groups differently. The \nAWS provider\n, for example,\nwill return an ARN. (To Be Fixed)\n\n\nexclude\n\n\nThis option lets you exclude certain firewall / security groups from checking, similar to include above. The\nexclude rule takes precedence over include.",
+            "title": "Firewall"
+        },
+        {
+            "location": "/rules/firewall/#firewall-rules",
+            "text": "This section details how to configure the firewall compliance rules.",
+            "title": "Firewall rules"
+        },
+        {
+            "location": "/rules/firewall/#do-not-permit-a-certain-port-to-be-public",
+            "text": "This rule fails if there is a firewall rule allowing access to a certain port from the whole internet ( 0.0.0.0/0  or ::/0 ). The configuration is as follows:  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED\n  protocol: tcp\n  ports:\n    - 22\n  include:\n    - some.*regexp\n  exclude:\n    - public  protocol  This option specifies the protocol, either as a name or a number. It accepts only a single protocol.  ports  This option accepts a list of ports that should be checked.  include  This option accepts a regular expression to match against the security group name. If include is specified, only\nthe security groups with the specified name will be considered.  Note that each cloud provider implements security groups differently. The  AWS provider , for example,\nwill return an ARN. (To Be Fixed)  exclude  This option lets you exclude certain firewall / security groups from checking, similar to include above. The\nexclude rule takes precedence over include.",
+            "title": "Do not permit a certain port to be public"
+        },
+        {
+            "location": "/rules/s3/",
+            "text": "S3 Rules\n\n\nThis section details the rules relevant to AWS S3 and compatible object storages.\n\n\nDo not permit an S3 bucket to be public\n\n\nThis rule checks S3 bucket ACLs so that they are not public. The configuration goes like this:\n\n\n- type: S3_PUBLIC_READ_PROHIBITED\n  include:\n    - some.*regexp\n  exclude:\n    - some.*regexp  \n\n\n\n\ninclude\n\n\nThis option accepts a regular expression to match against the bucket name. If include is specified, only\nthe security groups with the specified name will be considered.\n\n\nNote that each cloud provider implements buckets differently. The \nAWS provider\n, for example,\nwill return an ARN.\n\n\nexclude\n\n\nThis option lets you exclude certain buckets from checking, similar to include above. The\nexclude rule takes precedence over include.",
+            "title": "S3"
+        },
+        {
+            "location": "/rules/s3/#s3-rules",
+            "text": "This section details the rules relevant to AWS S3 and compatible object storages.",
+            "title": "S3 Rules"
+        },
+        {
+            "location": "/rules/s3/#do-not-permit-an-s3-bucket-to-be-public",
+            "text": "This rule checks S3 bucket ACLs so that they are not public. The configuration goes like this:  - type: S3_PUBLIC_READ_PROHIBITED\n  include:\n    - some.*regexp\n  exclude:\n    - some.*regexp    include  This option accepts a regular expression to match against the bucket name. If include is specified, only\nthe security groups with the specified name will be considered.  Note that each cloud provider implements buckets differently. The  AWS provider , for example,\nwill return an ARN.  exclude  This option lets you exclude certain buckets from checking, similar to include above. The\nexclude rule takes precedence over include.",
+            "title": "Do not permit an S3 bucket to be public"
+        },
+        {
+            "location": "/clouds/aws/",
+            "text": "Amazon Web Services\n\n\nAmazon Web Services\n, or AWS, is a popular cloud provider and is supported by cscanner.\nThe configuration does as follows:\n\n\nconnection-name:\n  type: aws\n  accessKeyId: \"\"\n  secretAccessKey: \"\"\n  sessionToken: \"\"\n  profile: \"\"\n\n\n\n\nEach of the parameters is optional. If they are not provided, the default is to fall back to the AWS client default\nbehavior, such as reading options from environment variables or credentials files.\n\n\nRules\n\n\nThe AWS provider currently supports the following rules:\n\n\n\n\nFirewall\n\n\nS3",
+            "title": "Aws"
+        },
+        {
+            "location": "/clouds/aws/#amazon-web-services",
+            "text": "Amazon Web Services , or AWS, is a popular cloud provider and is supported by cscanner.\nThe configuration does as follows:  connection-name:\n  type: aws\n  accessKeyId: \"\"\n  secretAccessKey: \"\"\n  sessionToken: \"\"\n  profile: \"\"  Each of the parameters is optional. If they are not provided, the default is to fall back to the AWS client default\nbehavior, such as reading options from environment variables or credentials files.",
+            "title": "Amazon Web Services"
+        },
+        {
+            "location": "/clouds/aws/#rules",
+            "text": "The AWS provider currently supports the following rules:   Firewall  S3",
+            "title": "Rules"
+        },
+        {
+            "location": "/clouds/exoscale/",
+            "text": "Exoscale\n\n\nExoscale\n is a European/Swiss IaaS cloud provider and is supported by cscanner. Under the hood\nit implements a CloudStack-like API.\n\n\nThe configuration goes like this:\n\n\n  exoscale-test:\n    type: exoscale\n    key: \"\"\n    secret: \"\"\n\n\n\n\nNote, that \ncloudstack.ini\n is currently not supported.\n\n\nRules\n\n\nThe Exoscale provider supports the following rule sets:\n\n\n\n\nFirewall\n\n\nS3",
+            "title": "Exoscale"
+        },
+        {
+            "location": "/clouds/exoscale/#exoscale",
+            "text": "Exoscale  is a European/Swiss IaaS cloud provider and is supported by cscanner. Under the hood\nit implements a CloudStack-like API.  The configuration goes like this:    exoscale-test:\n    type: exoscale\n    key: \"\"\n    secret: \"\"  Note, that  cloudstack.ini  is currently not supported.",
+            "title": "Exoscale"
+        },
+        {
+            "location": "/clouds/exoscale/#rules",
+            "text": "The Exoscale provider supports the following rule sets:   Firewall  S3",
+            "title": "Rules"
+        }
+    ]
+}
