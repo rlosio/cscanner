@@ -5,6 +5,7 @@ import com.opsbears.cscanner.core.Rule;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
 import com.opsbears.cscanner.exoscale.ExoscalePlugin;
+import com.opsbears.cscanner.firewall.FirewallPlugin;
 import com.opsbears.cscanner.s3.S3Plugin;
 import com.opsbears.cscanner.yaml.YamlPlugin;
 
@@ -18,6 +19,7 @@ public class CLIApplication {
         ScannerCore scannerCore = new ScannerCore(Arrays.asList(
             new YamlPlugin(argv[0]),
             new S3Plugin(),
+            new FirewallPlugin(),
             new AWSPlugin(),
             new ExoscalePlugin()
         ));

@@ -1,34 +1,43 @@
 package com.opsbears.cscanner.exoscale;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.opsbears.cscanner.core.CloudProviderConnection;
+import com.opsbears.cscanner.firewall.FirewallClient;
+import com.opsbears.cscanner.firewall.FirewallConnection;
 import com.opsbears.cscanner.s3.S3Connection;
 import com.opsbears.cscanner.s3.S3Factory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class ExoscaleConnection implements CloudProviderConnection, S3Connection {
+public class ExoscaleConnection implements CloudProviderConnection, S3Connection, FirewallConnection {
     private final String name;
-    private final ExoscaleConfiguration awsConfiguration;
+    private final ExoscaleConfiguration exoscaleConfiguration;
 
     public ExoscaleConnection(
         String name,
-        ExoscaleConfiguration awsConfiguration
+        ExoscaleConfiguration exoscaleConfiguration
     ) {
         this.name = name;
 
-        this.awsConfiguration = awsConfiguration;
+        this.exoscaleConfiguration = exoscaleConfiguration;
     }
 
     @Override
     public S3Factory getS3Factory() {
-        return new ExoscaleS3ClientSupplier(awsConfiguration);
+        return new ExoscaleS3ClientSupplier(exoscaleConfiguration);
     }
 
     @Override
     public String getConnectionName() {
         return name;
+    }
+
+    @Override
+    public FirewallClient getFirewallClient() {
+        //todo handle cloudstack config
+        return new ExoscaleFirewallClient(
+            exoscaleConfiguration.key,
+            exoscaleConfiguration.secret
+        );
     }
 }

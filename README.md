@@ -20,7 +20,10 @@ rules:
       - .*
     exclude:
       - .*public.*
-
+  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+    protocol: 6
+    ports:
+      - 22
 ```
 
 The result of the application will be like this:

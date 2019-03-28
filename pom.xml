@@ -24,6 +24,7 @@
         <module>yaml</module>
         <module>aws</module>
         <module>exoscale</module>
+        <module>firewall</module>
     </modules>
 
     <licenses>
