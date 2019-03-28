@@ -24,6 +24,10 @@ rules:
     protocol: 6
     ports:
       - 22
+    include:
+      - .*
+    exclude:
+      - .*public.*
 ```
 
 The result of the application will be like this:
