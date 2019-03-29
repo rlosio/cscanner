@@ -20,11 +20,11 @@
     <modules>
         <module>cli</module>
         <module>core</module>
-        <module>rule/s3</module>
-        <module>config/yaml</module>
-        <module>provider/aws</module>
-        <module>provider/exoscale</module>
-        <module>rule/firewall</module>
+        <module>s3</module>
+        <module>yaml</module>
+        <module>aws</module>
+        <module>exoscale</module>
+        <module>firewall</module>
     </modules>
 
     <licenses>

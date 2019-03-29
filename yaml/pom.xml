@@ -7,7 +7,6 @@
         <groupId>com.opsbears.cscanner</groupId>
         <artifactId>parent</artifactId>
         <version>master-SNAPSHOT</version>
-        <relativePath>../../</relativePath>
     </parent>
     <artifactId>yaml</artifactId>
     <name>YAML config loader for CScanner</name>
