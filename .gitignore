@@ -6,3 +6,7 @@ dest
 site
 test.yml
 .flattened-pom.xml
+*.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+.terraform

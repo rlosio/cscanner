@@ -1,0 +1,17 @@
+---
+version: 2
+jobs:
+  build:
+    docker:
+    - image: janoszen/java-build
+
+    steps:
+    - checkout
+    - restore_cache:
+        key: cscanner-{{ checksum "pom.xml" }}
+    - run: mvn dependency:go-offline
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: cscanner-{{ checksum "pom.xml" }}
+    - run: mvn package
