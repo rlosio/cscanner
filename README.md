@@ -3,6 +3,13 @@
 [![CircleCI](https://circleci.com/gh/janoszen/cscanner.svg?style=svg)](https://circleci.com/gh/janoszen/cscanner)
 [![GitHub Releases](https://img.shields.io/github/tag/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
 
+## Things to do
+
+» [Grab the latest release](https://github.com/janoszen/cscanner/releases)
+» [Read the full documentation at cscanner.io](https://cscanner.io)
+
+## A brief introduction
+
 This application lets you scan one or more cloud accounts for compliance with a certain ruleset. For example, to scan
 an AWS account to make sure there are no publicly readable S3 buckets, you can use this config file:
 
@@ -44,4 +51,11 @@ aws-test	s3	janoszen-access-test	NONCOMPLIANT
 It is very similar to AWSConfig in its intention, but it is designed from the ground up to support multiple cloud
 providers and accounts at once.
 
-» [Read the full documentation at cscanner.io](https://cscanner.io)
+## Requirements
+
+In order to run this project you will require at least a Java 8 JRE.
+
+## License
+
+This project is licensed under the Apache License Version 2.0.
+

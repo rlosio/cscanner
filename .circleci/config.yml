@@ -50,7 +50,7 @@ jobs:
       - run: mkdir -p /release
       - run: cp /tmp/project/cli/target/*.jar /release
       - run: mv /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-jar-with-dependencies.jar /release/cscanner.jar
-      - run: mv /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-javadoc.jar /release/cscanner-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-javadoc.jar
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-sources.jar
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT.jar
       - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
@@ -63,7 +63,7 @@ jobs:
       - run: mkdir -p /release
       - run: cp cli/target/*.jar /release
       - run: mv /release/cli-${CIRCLE_TAG}-jar-with-dependencies.jar /release/cscanner.jar
-      - run: mv /release/cli-${CIRCLE_TAG}-javadoc.jar /release/cscanner-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_TAG}-javadoc.jar
       - run: rm /release/cli-${CIRCLE_TAG}-sources.jar
       - run: rm /release/cli-${CIRCLE_TAG}.jar
       - run: ghr -u janoszen -r cscanner -recreate ${CIRCLE_TAG} /release
