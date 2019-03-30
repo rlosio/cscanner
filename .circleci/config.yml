@@ -85,6 +85,7 @@ workflows:
           branches:
             ignore: /.*/
           tags:
+            ignore: /.*-SNAPSHOT/
             only: /.*/
     - deploy-branch:
         context: cscanner
@@ -104,4 +105,5 @@ workflows:
           branches:
             ignore: /.*/
           tags:
+            ignore: /.*-SNAPSHOT/
             only: /.*/
