@@ -19,6 +19,10 @@ jobs:
         paths:
         - ~/.m2
         key: cscanner-{{ checksum "pom.xml" }}
+    - persist_to_workspace:
+        root: /tmp/project
+        paths:
+        - "*/target/*.jar"
   build-tag:
     <<: *defaults
     steps:
@@ -33,14 +37,18 @@ jobs:
         paths:
         - ~/.m2
         key: cscanner-{{ checksum "pom.xml" }}
+    - persist_to_workspace:
+        root: /tmp/project
+        paths:
+        - "*/target/*.jar"
   deploy-branch:
     <<: *defaults
     steps:
     - attach_workspace:
         at: /tmp/project
     - run: mkdir -p /release
-    - run: cp cli/target/*.jar /release
-    - run: ghr -recreate ${CIRCLE_BRANCH}-SNAPSHOT /release
+    - run: cp /tmp/project/cli/target/*.jar /release
+    - run: ghr -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
   deploy-tag:
     <<: *defaults
     steps:
