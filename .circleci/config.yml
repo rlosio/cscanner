@@ -74,14 +74,16 @@ workflows:
           tags:
             only: /.*/
     - deploy-branch:
+        context: cscanner
         requires:
-        - build-branch
+          - build-branch
         filters:
           branches:
             only: /.*/
           tags:
             ignore: /.*/
     - deploy-tag:
+        context: cscanner
         requires:
           - build-tag
         filters:
