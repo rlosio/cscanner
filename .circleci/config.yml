@@ -1,12 +1,17 @@
 ---
 version: 2
-jobs:
-  build:
-    docker:
+defaults: &defaults
+  working_directory: /tmp/project
+  docker:
     - image: janoszen/java-build
-
+jobs:
+  build-branch:
+    <<: *defaults
     steps:
     - checkout
+    - run:
+        name: Set Maven version
+        command: mvn versions:set -DnewVersion=${CIRCLE_BRANCH}-SNAPSHOT
     - restore_cache:
         key: cscanner-{{ checksum "pom.xml" }}
     - run: mvn package
@@ -14,3 +19,65 @@ jobs:
         paths:
         - ~/.m2
         key: cscanner-{{ checksum "pom.xml" }}
+  build-tag:
+    <<: *defaults
+    steps:
+    - checkout
+    - run:
+        name: Set Maven version
+        command: mvn versions:set -DnewVersion=${CIRCLE_TAG}
+    - restore_cache:
+        key: cscanner-{{ checksum "pom.xml" }}
+    - run: mvn package
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: cscanner-{{ checksum "pom.xml" }}
+  deploy-branch:
+    <<: *defaults
+    steps:
+    - attach_workspace:
+        at: /tmp/project
+    - run: mkdir -p /release
+    - run: cp cli/target/*.jar /release
+    - run: ghr -recreate ${CIRCLE_BRANCH}-SNAPSHOT /release
+  deploy-tag:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/project
+      - run: mkdir -p /release
+      - run: cp cli/target/*.jar /release
+      - run: ghr -recreate ${CIRCLE_TAG} /release
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+    - build-branch:
+        filters:
+          branches:
+            only: /.*/
+          tags:
+            ignore: /.*/
+    - build-tag:
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /.*/
+    - deploy-tag:
+        requires:
+        - build-branch
+        filters:
+          branches:
+            only: /.*/
+          tags:
+            ignore: /.*/
+    - deploy-tag:
+        requires:
+          - build-tag
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /.*/
