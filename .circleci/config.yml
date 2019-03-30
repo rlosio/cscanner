@@ -44,18 +44,29 @@ jobs:
   deploy-branch:
     <<: *defaults
     steps:
-    - attach_workspace:
-        at: /tmp/project
-    - run: mkdir -p /release
-    - run: cp /tmp/project/cli/target/*.jar /release
-    - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
+      - attach_workspace:
+          at: /tmp/project
+      - run: mkdir -p /release
+      - run: cp /tmp/project/cli/target/*.jar /release
+      - run: mv /release/cli-${CIRCLE_BRANCH}-jar-with-dependencies.jar /release/cscanner.jar
+      - run: mv /release/cli-${CIRCLE_BRANCH}-javadoc.jar /release/cscanner-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-sources.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}.jar
+      - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
+      - checkout
+      - run: mkdocs gh-pages
   deploy-tag:
     <<: *defaults
     steps:
+      - add_ssh_keys:
       - attach_workspace:
           at: /tmp/project
       - run: mkdir -p /release
       - run: cp cli/target/*.jar /release
+      - run: mv /release/cli-${CIRCLE_TAG}-jar-with-dependencies.jar /release/cscanner.jar
+      - run: mv /release/cli-${CIRCLE_TAG}-javadoc.jar /release/cscanner-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_TAG}-sources.jar
+      - run: rm /release/cli-${CIRCLE_TAG}.jar
       - run: ghr -u janoszen -r cscanner -recreate ${CIRCLE_TAG} /release
 workflows:
   version: 2
@@ -64,6 +75,7 @@ workflows:
     - build-branch:
         filters:
           branches:
+            ignore: gh-pages
             only: /.*/
           tags:
             ignore: /.*/
@@ -79,6 +91,7 @@ workflows:
           - build-branch
         filters:
           branches:
+            ignore: gh-pages
             only: /.*/
           tags:
             ignore: /.*/

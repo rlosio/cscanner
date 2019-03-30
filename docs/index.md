@@ -28,8 +28,17 @@ are compliant or are violating the rules.
 
 ## Downloading
 
-At this time you will have to download [the source code](https://github.com/janoszen/cscanner) and compile it yourself 
-(see instructions below).
+You can grab [one of the releases](https://github.com/janoszen/cscanner/releases) from GitHub.
+
+## Running
+
+To run the cscanner, simply point it to your config file:
+
+```
+java -jar cscanner.jar your-config-file.yaml
+```
+
+Make sure you have at least Java 8 to run this application.
 
 ## Configuring
 
@@ -90,12 +99,3 @@ Currently the following rule sets are supported:
 If you want to compile the utility from source, you will need [Maven](https://maven.org). Using Maven and at least
 a JDK compatible with Java 8 you should be able to simply run `mvn package` to compile the source code and then find
 the compiled binaries in `cli/target`.
-
-## Running
-
-To run the cscanner, simply point it to your config file:
-
-```
-java -jar cli-master-SNAPSHOT-jar-with-dependencies.jar your-config-file.yaml
-```
-
