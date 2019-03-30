@@ -1,6 +1,7 @@
 # Janos' Cloud Scanner
 
 [![CircleCI](https://circleci.com/gh/janoszen/cscanner.svg?style=svg)](https://circleci.com/gh/janoszen/cscanner)
+[![GitHub Releases](https://img.shields.io/github/tag/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
 
 This application lets you scan one or more cloud accounts for compliance with a certain ruleset. For example, to scan
 an AWS account to make sure there are no publicly readable S3 buckets, you can use this config file:

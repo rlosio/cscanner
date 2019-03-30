@@ -2,6 +2,7 @@
 version: 2
 defaults: &defaults
   working_directory: /tmp/project
+  parallelism: 1
   docker:
     - image: janoszen/java-build
 jobs:
