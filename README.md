@@ -1,6 +1,6 @@
 # Janos' Cloud Scanner
 
-[![CircleCI](https://circleci.com/gh/janoszen/cscanner.svg?style=svg)](https://circleci.com/gh/janoszen/cscanner)
+[![CircleCI](https://img.shields.io/circleci/project/github/janoszen/cscanner.svg)](https://circleci.com/gh/janoszen/cscanner)
 [![GitHub Releases](https://img.shields.io/github/tag/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
 
 ## Things to do
