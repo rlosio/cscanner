@@ -6,6 +6,7 @@
 ## Things to do
 
 » [Grab the latest release](https://github.com/janoszen/cscanner/releases)
+
 » [Read the full documentation at cscanner.io](https://cscanner.io)
 
 ## A brief introduction
