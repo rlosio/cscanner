@@ -53,6 +53,7 @@ jobs:
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-sources.jar
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT.jar
       - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
+      - run: rm -rf /tmp/project
       - checkout
       - run: mkdocs gh-pages
   deploy-tag:
