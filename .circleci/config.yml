@@ -48,10 +48,10 @@ jobs:
           at: /tmp/project
       - run: mkdir -p /release
       - run: cp /tmp/project/cli/target/*.jar /release
-      - run: mv /release/cli-${CIRCLE_BRANCH}-jar-with-dependencies.jar /release/cscanner.jar
-      - run: mv /release/cli-${CIRCLE_BRANCH}-javadoc.jar /release/cscanner-javadoc.jar
-      - run: rm /release/cli-${CIRCLE_BRANCH}-sources.jar
-      - run: rm /release/cli-${CIRCLE_BRANCH}.jar
+      - run: mv /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-jar-with-dependencies.jar /release/cscanner.jar
+      - run: mv /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-javadoc.jar /release/cscanner-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-sources.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT.jar
       - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
       - checkout
       - run: mkdocs gh-pages
