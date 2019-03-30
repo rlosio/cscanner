@@ -53,9 +53,6 @@ jobs:
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-sources.jar
       - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT.jar
       - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
-      - run: rm -rf /tmp/project
-      - checkout
-      - run: mkdocs gh-pages
   deploy-tag:
     <<: *defaults
     steps:
@@ -69,6 +66,9 @@ jobs:
       - run: rm /release/cli-${CIRCLE_TAG}-sources.jar
       - run: rm /release/cli-${CIRCLE_TAG}.jar
       - run: ghr -u janoszen -r cscanner -recreate ${CIRCLE_TAG} /release
+      - run: rm -rf /tmp/project
+      - checkout
+      - run: mkdocs gh-deploy
 workflows:
   version: 2
   build-and-deploy:
