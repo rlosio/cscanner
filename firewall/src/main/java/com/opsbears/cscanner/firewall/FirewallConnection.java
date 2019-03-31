@@ -7,5 +7,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public interface FirewallConnection extends CloudProviderConnection {
+    String RESOURCE_TYPE = "firewallGroup";
+
     FirewallClient getFirewallClient();
 }

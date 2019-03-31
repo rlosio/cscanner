@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.opsbears.cscanner</groupId>
+        <artifactId>parent</artifactId>
+        <version>master-SNAPSHOT</version>
+    </parent>
+    <artifactId>test</artifactId>
+    <name>Integration tests for CScanner</name>
+    <description>Live fire tests for cscanner</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.opsbears.cscanner</groupId>
+            <artifactId>core</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>

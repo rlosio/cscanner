@@ -92,7 +92,7 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
             results.add(
                 new RuleResult(
                     connection.getConnectionName(),
-                    "firewallGroup",
+                    FirewallConnection.RESOURCE_TYPE,
                     firewallGroup.name,
                     compliant? RuleResult.Compliancy.COMPLIANT: RuleResult.Compliancy.NONCOMPLIANT
                 )

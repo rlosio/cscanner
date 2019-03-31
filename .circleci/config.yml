@@ -75,6 +75,7 @@ workflows:
   build-and-deploy:
     jobs:
     - build-branch:
+        context: cscanner
         filters:
           branches:
             ignore: gh-pages
@@ -82,6 +83,7 @@ workflows:
           tags:
             ignore: /.*/
     - build-tag:
+        context: cscanner
         filters:
           branches:
             ignore: /.*/

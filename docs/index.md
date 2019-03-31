@@ -12,7 +12,6 @@ fashion, not unlike AWS config.
 For example, if you want to make sure that your port 22 is never open to the world, across all your cloud providers,
 you could do something like this:
 
-
 ```yaml
 connections:
   # Configure your connections here

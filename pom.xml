@@ -25,6 +25,7 @@
         <module>aws</module>
         <module>exoscale</module>
         <module>firewall</module>
+        <module>test</module>
     </modules>
 
     <licenses>
