@@ -3,12 +3,17 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/janoszen/cscanner.svg)](https://circleci.com/gh/janoszen/cscanner)
 [![GitHub Releases](https://img.shields.io/github/release/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
 ![GitHub last commit](https://img.shields.io/github/last-commit/janoszen/cscanner.svg)
+![Discord](https://img.shields.io/discord/413306353545773069.svg)
 
 ## Things to do
 
 » [Grab the latest release](https://github.com/janoszen/cscanner/releases)
 
-» [Read the full documentation at cscanner.io](https://cscanner.io)
+» [Read the documentation](https://cscanner.io)
+
+» [Join the Discord](https://pasztor.at/discord)
+
+» [Support on Patreon](https://pasztor.at/patreon)
 
 ## A brief introduction
 
