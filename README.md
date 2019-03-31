@@ -1,9 +1,16 @@
-# Janos' Cloud Scanner
+# CScanner: A Cloud Security Scanner
 
-[![CircleCI](https://img.shields.io/circleci/project/github/janoszen/cscanner.svg)](https://circleci.com/gh/janoszen/cscanner)
+[![Documentation](https://img.shields.io/badge/documentation-available-green.svg)](https://cscanner.io)
 [![GitHub Releases](https://img.shields.io/github/release/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
-![GitHub last commit](https://img.shields.io/github/last-commit/janoszen/cscanner.svg)
+![GitHub](https://img.shields.io/github/license/janoszen/cscanner.svg)
 ![Discord](https://img.shields.io/discord/413306353545773069.svg)
+[![CircleCI](https://img.shields.io/circleci/project/github/janoszen/cscanner.svg)](https://circleci.com/gh/janoszen/cscanner)
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/janoszen/cscanner.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/janoszen/cscanner.svg)
+![GitHub top language](https://img.shields.io/github/languages/top/janoszen/cscanner.svg)
+![GitHub repo size](https://img.shields.io/github/repo-size/janoszen/cscanner.svg)
+![GitHub issues](https://img.shields.io/github/issues/janoszen/cscanner.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/janoszen/cscanner.svg)
 
 ## Things to do
 
