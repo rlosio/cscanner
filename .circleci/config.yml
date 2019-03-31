@@ -79,7 +79,6 @@ workflows:
         filters:
           branches:
             ignore: /gh-pages/
-            only: /.*/
           tags:
             ignore: /.*/
     - build-tag:
@@ -89,7 +88,6 @@ workflows:
             ignore: /.*/
           tags:
             ignore: /.*-SNAPSHOT/
-            only: /.*/
     - deploy-tag:
         context: cscanner
         requires:
@@ -99,4 +97,3 @@ workflows:
             ignore: /.*/
           tags:
             ignore: /.*-SNAPSHOT/
-            only: /.*/
