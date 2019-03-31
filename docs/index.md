@@ -8,7 +8,6 @@ title: CScanner: A Cloud Security Scanner
 ![GitHub](https://img.shields.io/github/license/janoszen/cscanner.svg)
 ![Discord](https://img.shields.io/discord/413306353545773069.svg)
 [![CircleCI](https://img.shields.io/circleci/project/github/janoszen/cscanner.svg)](https://circleci.com/gh/janoszen/cscanner)
-![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/janoszen/cscanner.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/janoszen/cscanner.svg)
 ![GitHub top language](https://img.shields.io/github/languages/top/janoszen/cscanner.svg)
 ![GitHub repo size](https://img.shields.io/github/repo-size/janoszen/cscanner.svg)
