@@ -78,7 +78,7 @@ workflows:
         context: cscanner
         filters:
           branches:
-            ignore: gh-pages
+            ignore: /gh-pages/
             only: /.*/
           tags:
             ignore: /.*/
@@ -96,7 +96,7 @@ workflows:
           - build-branch
         filters:
           branches:
-            ignore: gh-pages
+            ignore: /gh-pages/
             only: /.*/
           tags:
             ignore: /.*/
