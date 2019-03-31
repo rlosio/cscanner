@@ -1,7 +1,6 @@
 package com.opsbears.cscanner.firewall;
 
 import com.opsbears.cscanner.core.RuleBuilder;
-import jnr.netdb.Protocol;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
