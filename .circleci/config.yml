@@ -90,16 +90,6 @@ workflows:
           tags:
             ignore: /.*-SNAPSHOT/
             only: /.*/
-    - deploy-branch:
-        context: cscanner
-        requires:
-          - build-branch
-        filters:
-          branches:
-            ignore: /gh-pages/
-            only: /.*/
-          tags:
-            ignore: /.*/
     - deploy-tag:
         context: cscanner
         requires:
