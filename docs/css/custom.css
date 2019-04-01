@@ -1,0 +1,12 @@
+html .wy-side-nav-search {
+    background-color:#407dc0ff;
+}
+
+html .rst-content .admonition-title,
+html .rst-content .note .admonition-title {
+    background-color:#407dc0ff;
+}
+
+html .rst-content .note {
+    background-color: #d2e0f0ff;
+}

@@ -1,14 +1,20 @@
----
 site_name: "CScanner: A Cloud Security Scanner"
-repo_url: https://github.com/janoszen/cscanner/
-theme: readthedocs
-nav:
-  - "Home": "index.md"
-  - "Cloud providers":
-      - "Amazon Web Services": "clouds/aws.md"
-      - "Exoscale": "clouds/exoscale.md"
-  - "Rules":
-      - "Firewall": "rules/firewall.md"
-      - "S3": "rules/s3.md"
+site_url: "https://cscanner.io"
+repo_url: "https://github.com/janoszen/cscanner/"
 markdown_extensions:
   - admonition
+theme:
+  name: readthedocs
+  custom_dir: ./docs/.theme/
+  include_sidebar: false
+nav:
+- 'Home': 'index.md'
+- 'Cloud providers':
+  - 'Amazon Web Services': 'clouds/aws.md'
+  - 'Exoscale': 'clouds/exoscale.md'
+- 'Rules':
+  - 'Firewall': 'rules/firewall.md'
+  - 'S3': 'rules/s3.md'
+site_favicon: img/favicon.png
+extra_css:
+  - css/custom.css

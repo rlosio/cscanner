@@ -1,7 +1,3 @@
----
-title: CScanner: A Cloud Security Scanner
----
-
 # CScanner: A Cloud Security Scanner
 
 [![GitHub Releases](https://img.shields.io/github/release/janoszen/cscanner.svg)](https://github.com/janoszen/cscanner/releases)
