@@ -71,6 +71,7 @@ public class ExoscaleFirewallTest {
     public void testCompliantSecurityGroup() {
         //Setup
         testClient.ensureSecurityGroupExists("compliant");
+        testClient.ensureRuleExists("compliant", "icmpv6", Arrays.asList("::/0"), null, null, 128, 0);
         List<RuleConfiguration> rules = new ArrayList<>();
         Map<String, Object> options = new HashMap<>();
         options.put("protocol", "tcp");
@@ -104,7 +105,7 @@ public class ExoscaleFirewallTest {
     public void testNonCompliantSecurityGroup() {
         //Setup
         testClient.ensureSecurityGroupExists("noncompliant");
-        testClient.ensureRuleExists("noncompliant", "tcp", Arrays.asList("0.0.0.0/0"), 22, 22);
+        testClient.ensureRuleExists("noncompliant", "tcp", Arrays.asList("0.0.0.0/0"), 22, 22, null, null);
         List<RuleConfiguration> rules = new ArrayList<>();
         Map<String, Object> options = new HashMap<>();
         options.put("protocol", "tcp");

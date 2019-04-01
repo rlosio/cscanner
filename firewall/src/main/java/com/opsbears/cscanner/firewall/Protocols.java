@@ -74,7 +74,7 @@ public class Protocols {
         protocols.add(new Protocol("mobile", 55, new String[]{"MOBILE"}));
         protocols.add(new Protocol("tlsp", 56, new String[]{"TLSP"}));
         protocols.add(new Protocol("skip", 57, new String[]{"SKIP"}));
-        protocols.add(new Protocol("ipv6-icmp", 58, new String[]{"IPV6-ICMP"}));
+        protocols.add(new Protocol("ipv6-icmp", 58, new String[]{"IPV6-ICMP", "icmpv6"}));
         protocols.add(new Protocol("ipv6-nonxt", 59, new String[]{"IPV6-NONXT"}));
         protocols.add(new Protocol("ipv6-opts", 60, new String[]{"IPV6-OPTS"}));
         protocols.add(new Protocol("cftp", 62, new String[]{"CFTP"}));

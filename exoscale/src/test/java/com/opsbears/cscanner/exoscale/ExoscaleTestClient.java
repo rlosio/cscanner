@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -42,14 +43,33 @@ public class ExoscaleTestClient {
         }
     }
 
-    public void ensureRuleExists(String securityGroupName, String protocol, List<String> cidrList, int startPort, int endPort) {
+    public void ensureRuleExists(
+        String securityGroupName,
+        String protocol,
+        List<String> cidrList,
+        @Nullable Integer startPort,
+        @Nullable Integer endPort,
+        @Nullable Integer icmpType,
+        @Nullable Integer icmpCode
+    ) {
         try {
-            ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest("authorizeSecurityGroupIngress");
+            ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest(
+                "authorizeSecurityGroupIngress");
             apacheCloudStackRequest.addParameter("securitygroupname", securityGroupName);
             apacheCloudStackRequest.addParameter("protocol", protocol);
             apacheCloudStackRequest.addParameter("cidrList", String.join(",", cidrList));
-            apacheCloudStackRequest.addParameter("startPort", startPort);
-            apacheCloudStackRequest.addParameter("endPort", endPort);
+            if (startPort != null) {
+                apacheCloudStackRequest.addParameter("startPort", startPort);
+            }
+            if (endPort != null) {
+                apacheCloudStackRequest.addParameter("endPort", endPort);
+            }
+            if (icmpType != null) {
+                apacheCloudStackRequest.addParameter("icmptype", icmpType);
+            }
+            if (icmpCode != null) {
+                apacheCloudStackRequest.addParameter("icmpcode", icmpCode);
+            }
             String response = apacheCloudStackClient.executeRequest(apacheCloudStackRequest);
             JsonObject responseObject = new Gson().fromJson(response, JsonObject.class);
             String jobId = responseObject
