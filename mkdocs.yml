@@ -7,6 +7,8 @@ theme:
   name: readthedocs
   custom_dir: ./docs/.theme/
   include_sidebar: false
+  static_templates:
+    - .circleci/config.yml
 nav:
 - 'Home': 'index.md'
 - 'Cloud providers':
