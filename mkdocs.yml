@@ -11,6 +11,7 @@ theme:
     - .circleci/config.yml
 nav:
 - 'Home': 'index.md'
+- 'Downloads': 'downloads.md'
 - 'Cloud providers':
   - 'Amazon Web Services': 'clouds/aws.md'
   - 'Exoscale': 'clouds/exoscale.md'
