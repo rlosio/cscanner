@@ -18,9 +18,9 @@ nav:
   - 'Firewall': 'rules/firewall.md'
   - 'S3': 'rules/s3.md'
 - 'Development':
-  - 'Contributing to CScanner': 'dev/dev.md'
-  - 'Writing a Provider': 'dev/provider.md'
-  - 'Writing a Rule': 'dev/rule.md'
+  - 'Contributing to CScanner': 'development/index.md'
+  - 'Writing a Provider': 'development/provider.md'
+  - 'Writing a Rule': 'development/rule.md'
 site_favicon: img/favicon.png
 extra_css:
   - css/custom.css
