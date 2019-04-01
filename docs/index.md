@@ -10,7 +10,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/janoszen/cscanner.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/janoszen/cscanner.svg)
 ![GitHub stars](https://img.shields.io/github/stars/janoszen/cscanner.svg?style=social)
-![Twitter Follow](https://img.shields.io/twitter/follow/janoszen.svg?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/janoszen.svg?style=social)](https://twitter.com/janoszen)
 
 This utility is intended to check your cloud configuration for compliance with your companies rules in an automated
 fashion, not unlike AWS config.
