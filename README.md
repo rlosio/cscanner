@@ -10,6 +10,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/janoszen/cscanner.svg)
 ![GitHub issues](https://img.shields.io/github/issues/janoszen/cscanner.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/janoszen/cscanner.svg)
+![Twitter Follow](https://img.shields.io/twitter/follow/janoszen.svg?style=social)
 
 ## Things to do
 
