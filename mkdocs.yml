@@ -1,5 +1,5 @@
 site_name: "CScanner: A Cloud Security Scanner"
-site_url: "https://cscanner.io"
+site_url: "https://cscanner.io/"
 repo_url: "https://github.com/janoszen/cscanner/"
 markdown_extensions:
   - admonition
