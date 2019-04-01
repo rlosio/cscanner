@@ -1,37 +1,52 @@
 package com.opsbears.cscanner.s3;
 
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.RegionImpl;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.GetBucketAclRequest;
-import com.amazonaws.services.s3.model.Grant;
-import com.amazonaws.services.s3.model.Permission;
-import com.opsbears.cscanner.core.CloudProvider;
-import com.opsbears.cscanner.core.Rule;
+import com.amazonaws.services.s3.model.*;
 import com.opsbears.cscanner.core.RuleResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @ParametersAreNonnullByDefault
 public class S3PublicReadProhibitedRule implements S3Rule {
+    public final static String RULE = "S3_PUBLIC_READ_PROHIBITED";
+    private final boolean scanContents;
     private final List<Pattern> include;
     private final List<Pattern> exclude;
 
     /**
+     * @param scanContents
      * @param include Regular expressions of buckets to include from this type.
      * @param exclude Regular expression of buckets to exclude from this type.
      */
     public S3PublicReadProhibitedRule(
+        boolean scanContents,
         List<Pattern> include,
         List<Pattern> exclude
     ) {
+        this.scanContents = scanContents;
         this.include = include;
         this.exclude = exclude;
+    }
+
+    private boolean checkGrantList(List<Grant> grants) {
+        for (Grant grant : grants) {
+            if (
+                (
+                    grant.getPermission().equals(Permission.Read) ||
+                        grant.getPermission().equals(Permission.FullControl)
+                ) &&
+                    grant
+                        .getGrantee()
+                        .getIdentifier()
+                        .equalsIgnoreCase("http://acs.amazonaws.com/groups/global/AllUsers")
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -78,24 +93,34 @@ public class S3PublicReadProhibitedRule implements S3Rule {
                     )
                 )
                 .getGrantsAsList();
-            for (Grant grant : grants) {
-                if (
-                    (
-                        grant.getPermission().equals(Permission.Read) ||
-                        grant.getPermission().equals(Permission.FullControl)
-                    ) &&
-                    grant
-                        .getGrantee()
-                        .getIdentifier()
-                        .equalsIgnoreCase("http://acs.amazonaws.com/groups/global/AllUsers")
-                ) {
-                    compliancy = RuleResult.Compliancy.NONCOMPLIANT;
-                }
+            if (!checkGrantList(grants)) {
+                compliancy = RuleResult.Compliancy.NONCOMPLIANT;
             }
+            if (compliancy == RuleResult.Compliancy.COMPLIANT && scanContents) {
+                //Scan files
+                ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucket.getName());
+                ListObjectsV2Result result;
+                do {
+                    result = secondaryS3Client.listObjectsV2(req);
+
+                    for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+                        AccessControlList acls = secondaryS3Client.getObjectAcl(bucket.getName(), objectSummary.getKey());
+                        if (!checkGrantList(acls.getGrantsAsList())) {
+                            compliancy = RuleResult.Compliancy.NONCOMPLIANT;
+                            break;
+                        }
+                    }
+                    // If there are more than maxKeys keys in the bucket, get a continuation token
+                    // and list the next objects.
+                    String token = result.getNextContinuationToken();
+                    req.setContinuationToken(token);
+                } while (result.isTruncated() && compliancy == RuleResult.Compliancy.COMPLIANT);
+            }
+
             results.add(
                 new RuleResult(
                     s3Connection.getConnectionName(),
-                    "s3",
+                    S3Rule.RESOURCE_TYPE,
                     bucket.getName(),
                     compliancy
                 )

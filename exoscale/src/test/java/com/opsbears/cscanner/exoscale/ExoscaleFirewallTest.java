@@ -3,6 +3,8 @@ package com.opsbears.cscanner.exoscale;
 import com.opsbears.cscanner.core.*;
 import com.opsbears.cscanner.firewall.FirewallConnection;
 import com.opsbears.cscanner.firewall.FirewallPlugin;
+import com.opsbears.cscanner.firewall.FirewallPublicServiceProhibitedRule;
+import com.opsbears.cscanner.firewall.FirewallRule;
 import com.opsbears.cscanner.s3.S3Plugin;
 import com.opsbears.cscanner.test.TestConfigurationLoader;
 import com.opsbears.cscanner.test.TestPlugin;
@@ -38,27 +40,8 @@ public class ExoscaleFirewallTest {
     }
 
     private ScannerCore createScannerCore(List<RuleConfiguration> rules) {
-        Map<String, ConnectionConfiguration> connections = new HashMap<>();
-        Map<String, Object> options = new HashMap<>();
-        options.put("key", apiKey);
-        options.put("secret", apiSecret);
-        connections.put("exo", new ConnectionConfiguration(
-            "exoscale",
-            options
-        ));
-
-        return new ScannerCore(Arrays.asList(
-            new TestPlugin(
-                Arrays.asList(
-                    new TestConfigurationLoader(
-                        connections,
-                        rules
-                    )
-                )
-            ),
-            new S3Plugin(),
-            new FirewallPlugin(),
-            new ExoscalePlugin()
+        return ScannerCoreFactory.create(apiKey, apiSecret, rules, Arrays.asList(
+            new FirewallPlugin()
         ));
     }
 
@@ -77,7 +60,7 @@ public class ExoscaleFirewallTest {
         options.put("protocol", "tcp");
         options.put("ports", Arrays.asList(22));
         rules.add(new RuleConfiguration(
-            "FIREWALL_PUBLIC_SERVICE_PROHIBITED",
+            FirewallPublicServiceProhibitedRule.RULE,
             new ArrayList<>(),
             options
         ));
@@ -111,7 +94,7 @@ public class ExoscaleFirewallTest {
         options.put("protocol", "tcp");
         options.put("ports", Arrays.asList(22));
         rules.add(new RuleConfiguration(
-            "FIREWALL_PUBLIC_SERVICE_PROHIBITED",
+            FirewallPublicServiceProhibitedRule.RULE,
             new ArrayList<>(),
             options
         ));

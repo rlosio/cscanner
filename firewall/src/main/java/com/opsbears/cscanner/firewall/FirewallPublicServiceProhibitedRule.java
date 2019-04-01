@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 @ParametersAreNonnullByDefault
 public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnection> {
+    public static final String RULE = "FIREWALL_PUBLIC_SERVICE_PROHIBITED";
     public final Integer protocol;
     public final List<Integer> ports;
     public final List<Pattern> include;

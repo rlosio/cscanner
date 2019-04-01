@@ -10,3 +10,5 @@ nav:
   - "Rules":
       - "Firewall": "rules/firewall.md"
       - "S3": "rules/s3.md"
+markdown_extensions:
+  - admonition

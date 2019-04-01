@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class FirewallPublicServiceProhibitedRuleBuilder implements RuleBuilder<FirewallPublicServiceProhibitedRule, FirewallConnection> {
     @Override
     public String getType() {
-        return "FIREWALL_PUBLIC_SERVICE_PROHIBITED";
+        return FirewallPublicServiceProhibitedRule.RULE;
     }
 
     @Override

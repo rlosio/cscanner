@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class S3PublicReadProhibitedRuleBuilder implements RuleBuilder<S3PublicReadProhibitedRule, S3Connection> {
     @Override
     public String getType() {
-        return "S3_PUBLIC_READ_PROHIBITED";
+        return S3PublicReadProhibitedRule.RULE;
     }
 
     @Override
@@ -54,7 +54,13 @@ public class S3PublicReadProhibitedRuleBuilder implements RuleBuilder<S3PublicRe
             }
         }
 
+        boolean scanContents = false;
+        if (options.containsKey("scanContents") && (boolean) options.get("scanContents")) {
+            scanContents = true;
+        }
+
         return new S3PublicReadProhibitedRule(
+            scanContents,
             includePatterns,
             excludePatterns
         );

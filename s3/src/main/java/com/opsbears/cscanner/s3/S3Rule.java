@@ -7,5 +7,5 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public interface S3Rule extends Rule<S3Connection> {
-
+    String RESOURCE_TYPE = "s3";
 }
