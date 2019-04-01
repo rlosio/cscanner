@@ -26,16 +26,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="628.52187"
+     inkscape:cx="448.71472"
      inkscape:cy="337.04643"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
-     inkscape:window-width="1920"
-     inkscape:window-height="1005"
-     inkscape:window-x="3840"
-     inkscape:window-y="1104"
+     inkscape:window-width="3840"
+     inkscape:window-height="2085"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -63,18 +63,6 @@
        y="422.36215" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.25px;line-height:125%;font-family:Roboto;-inkscape-font-specification:Roboto;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="447.99802"
-       y="833.76312"
-       id="text4136"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4138"
-         x="447.99802"
-         y="833.76312"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:90px;font-family:'PT Sans Narrow';-inkscape-font-specification:'PT Sans Narrow Condensed';fill:#ffffff;fill-opacity:1">CSCANNER</tspan></text>
-    <text
-       xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.25px;line-height:125%;font-family:Roboto;-inkscape-font-specification:Roboto;letter-spacing:0px;word-spacing:0px;fill:#d0d0d0;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="243.06343"
        y="929.02454"
@@ -85,5 +73,60 @@
          x="243.06343"
          y="929.02454"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:70px;font-family:'PT Sans Narrow';-inkscape-font-specification:'PT Sans Narrow Condensed';fill:#d0d0d0;fill-opacity:1">A CLOUD SECURITY SCANNER</tspan></text>
+    <g
+       id="g4865"
+       transform="translate(134.80152,80)">
+      <g
+         transform="matrix(2.5842114,0,0,2.5842114,231.00617,-1779.2608)"
+         id="g4804">
+        <g
+           id="g4746"
+           transform="matrix(0.72122308,0,0,0.72122308,19.997707,258.70236)">
+          <path
+             inkscape:connector-curvature="0"
+             id="path4727"
+             d="m 131.40867,960.14388 a 49.999996,49.999996 0 0 0 70.70799,-0.61582 49.999996,49.999996 0 0 0 -0.61582,-70.70799 l -70.09217,71.32381 z"
+             style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             id="path4736"
+             d="M 165.80357,924.68359 148.75,907.98716 l 0,0"
+             style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+          <circle
+             r="3.6160715"
+             cy="905.17468"
+             cx="146.11607"
+             id="path4738"
+             style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+        </g>
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.16366935;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 131.10087,983.08435 19.57966,-22.85813 17.84936,22.67595"
+           id="path4742"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:2.16366935;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 150.58946,960.31729 -0.18214,22.67597"
+           id="path4744"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         inkscape:connector-curvature="0"
+         id="path4751"
+         d="m 508.07522,455.16322 a 94.648159,94.648165 0 0 0 -93.88564,83.32266 94.648159,94.648165 0 0 0 -75.23346,-37.34153 94.648159,94.648165 0 0 0 -94.6525,94.64636 94.648159,94.648165 0 0 0 0.0493,1.34201 l -5.94942,0 0,0.0866 a 80.686533,80.686538 0 0 0 -78.96265,80.62625 80.686533,80.686538 0 0 0 78.96265,80.60153 l 0,0.11135 410.44745,0 0,-0.12378 a 119.02355,119.02355 0 0 0 3.07985,0.15454 119.02355,119.02355 0 0 0 119.0253,-119.02532 119.02355,119.02355 0 0 0 -119.0253,-119.01911 119.02355,119.02355 0 0 0 -50.94105,11.58338 94.648159,94.648165 0 0 0 -92.91471,-76.96508 z"
+         style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:12.9210577;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4136-3"
+         y="703.52014"
+         x="211.10188"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:77.5263443px;line-height:125%;font-family:Roboto;-inkscape-font-specification:Roboto;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:77.5263443px;font-family:'PT Sans Narrow';-inkscape-font-specification:'PT Sans Narrow Condensed';fill:#ffffff;fill-opacity:1"
+           y="703.52014"
+           x="211.10188"
+           id="tspan4138-6"
+           sodipodi:role="line">CSCANNER</tspan></text>
+    </g>
   </g>
 </svg>
