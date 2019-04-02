@@ -5,7 +5,6 @@ import br.com.autonomiccs.apacheCloudStack.client.ApacheCloudStackRequest;
 import br.com.autonomiccs.apacheCloudStack.client.beans.ApacheCloudStackUser;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.opsbears.cscanner.firewall.FirewallClient;
 import com.opsbears.cscanner.firewall.FirewallGroup;
@@ -57,6 +56,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
             firewallRules.addAll(extractRules(egressRules, FirewallRule.Direction.EGRESS));
             firewallGroups.add(new FirewallGroup(
                 securityGroup.get("name").getAsString(),
+                null,
                 firewallRules
             ));
         }
@@ -104,6 +104,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
             }
 
             firewallRules.add(new FirewallRule(
+                rule.get("ruleid").getAsString(),
                 protocol,
                 cidr,
                 securityGroupName,
@@ -117,6 +118,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
         }
         if (direction == FirewallRule.Direction.EGRESS && rules.size() == 0) {
             firewallRules.add(new FirewallRule(
+                null,
                 null,
                 null,
                 null,

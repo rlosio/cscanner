@@ -25,7 +25,3 @@ The Exoscale provider supports the following rule sets:
 
 - [Firewall](../rules/firewall.md)
 - [S3](../rules/s3.md)
-
-!!! warning "Exoscale SOS/S3 compatibility"
-    Exoscale SOS does not support bucket ACLs, so you need to set `scanContents` to `true` on the
-    `S3_PUBLIC_READ_PROHIBITED` rule to take effect. Otherwise this rule will do nothing.

@@ -167,7 +167,16 @@ public class Protocols {
         }
         return protocol.get().number;
     }
-    
+
+    public String getProtocolNameByNumber(int id) {
+        Optional<Protocol> protocol = protocols.stream().filter(p -> p.number == id).findFirst();
+
+        if (!protocol.isPresent()) {
+            throw new InvalidParameterException("Invalid protocol number: " + id);
+        }
+        return protocol.get().name;
+    }
+
     public static class Protocol {
         public final String name;
         public final int number;

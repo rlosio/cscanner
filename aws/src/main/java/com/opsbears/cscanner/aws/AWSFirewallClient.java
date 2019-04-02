@@ -1,7 +1,6 @@
 package com.opsbears.cscanner.aws;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
@@ -34,6 +33,7 @@ public class AWSFirewallClient implements FirewallClient {
         for (IpPermission permission : permissions) {
             for (IpRange ipvRange : permission.getIpv4Ranges()) {
                 firewallRules.add(new FirewallRule(
+                    null,
                     permission.getIpProtocol().equals("-1") ?null:protocols.getProtocolIdByName(permission.getIpProtocol()),
                     ipvRange.getCidrIp(),
                     null,
@@ -47,6 +47,7 @@ public class AWSFirewallClient implements FirewallClient {
             }
             for (Ipv6Range ipvRange : permission.getIpv6Ranges()) {
                 firewallRules.add(new FirewallRule(
+                    null,
                     permission.getIpProtocol().equals("-1") ?null:protocols.getProtocolIdByName(permission.getIpProtocol()),
                     ipvRange.getCidrIpv6(),
                     null,
@@ -60,6 +61,7 @@ public class AWSFirewallClient implements FirewallClient {
             }
             for (UserIdGroupPair userIdGroupPair : permission.getUserIdGroupPairs()) {
                 firewallRules.add(new FirewallRule(
+                    null,
                     permission.getIpProtocol().equals("-1") ?null:protocols.getProtocolIdByName(permission.getIpProtocol()),
                     null,
                     getArn(region, userIdGroupPair.getUserId(), userIdGroupPair.getGroupId()),
@@ -94,7 +96,8 @@ public class AWSFirewallClient implements FirewallClient {
         ));
 
         return new FirewallGroup(
-            getArn(region, accountId, securityGroup.getGroupId()),
+            securityGroup.getGroupName(),
+            region.toString(),
             firewallRules
         );
     }

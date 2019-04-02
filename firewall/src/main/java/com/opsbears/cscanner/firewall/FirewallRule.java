@@ -5,7 +5,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class FirewallRule {
-
+    @Nullable
+    public final String id;
     @Nullable
     public final Integer protocolNumber;
     @Nullable
@@ -26,6 +27,7 @@ public class FirewallRule {
     public final Rule rule;
 
     public FirewallRule(
+        @Nullable String id,
         @Nullable Integer protocolNumber,
         @Nullable String cidr,
         @Nullable String otherFirewallGroupReference,
@@ -36,6 +38,7 @@ public class FirewallRule {
         Direction direction,
         Rule rule
     ) {
+        this.id = id;
         this.protocolNumber = protocolNumber;
         this.cidr = cidr;
         this.otherFirewallGroupReference = otherFirewallGroupReference;

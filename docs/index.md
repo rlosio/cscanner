@@ -43,7 +43,8 @@ To run the cscanner, simply point it to your config file:
 java -jar cscanner.jar your-config-file.yaml
 ```
 
-Make sure you have at least Java 8 to run this application.
+Make sure you have at least Java 8 to run this application. Note that you can use the `-h` or `--help` option to get a 
+full list of possible filtering and output options.
 
 ## Configuring
 

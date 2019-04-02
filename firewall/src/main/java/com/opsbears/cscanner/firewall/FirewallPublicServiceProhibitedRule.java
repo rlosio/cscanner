@@ -62,6 +62,7 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
             }
 
             boolean compliant = true;
+            List<RuleResult.Violation> violations = new ArrayList<>();
             for (Integer port : ports) {
                 for (FirewallRule firewallRule : firewallGroup.firewallRules) {
                     if (
@@ -88,6 +89,10 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
                         )) {
                         if (firewallRule.rule == FirewallRule.Rule.ALLOW) {
                             compliant = false;
+                            String protocolDescription = firewallRule.protocolNumber == null?"all":Protocols.getInstance().getProtocolNameByNumber(firewallRule.protocolNumber);
+                            String fromPortDescription = firewallRule.fromPort == null?"0": String.valueOf(firewallRule.fromPort);
+                            String toPortDescription = firewallRule.toPort == null?"0": String.valueOf(firewallRule.toPort);
+                            violations.add(new RuleResult.Violation(firewallRule.id, "Ingress rule provides public access to port " + port + " (" + protocolDescription + "/" + fromPortDescription + "-" + toPortDescription + ")"));
                         } else {
                             //Blocks rule, fall through.
                             break;
@@ -99,8 +104,10 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
                 new RuleResult(
                     connection.getConnectionName(),
                     FirewallConnection.RESOURCE_TYPE,
+                    firewallGroup.region,
                     firewallGroup.name,
-                    compliant? RuleResult.Compliancy.COMPLIANT: RuleResult.Compliancy.NONCOMPLIANT
+                    compliant? RuleResult.Compliancy.COMPLIANT: RuleResult.Compliancy.NONCOMPLIANT,
+                    violations
                 )
             );
         }

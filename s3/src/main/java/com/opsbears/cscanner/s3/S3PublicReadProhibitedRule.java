@@ -56,6 +56,7 @@ public class S3PublicReadProhibitedRule implements S3Rule {
         List<Bucket> buckets = s3Client.listBuckets();
         List<RuleResult> results = new ArrayList<>();
         for (Bucket bucket : buckets) {
+            List<RuleResult.Violation> violations = new ArrayList<>();
             if (!include.isEmpty()) {
                 boolean includeMatches = false;
                 for (Pattern includePattern : include) {
@@ -95,6 +96,7 @@ public class S3PublicReadProhibitedRule implements S3Rule {
                 .getGrantsAsList();
             if (!checkGrantList(grants)) {
                 compliancy = RuleResult.Compliancy.NONCOMPLIANT;
+                violations.add(new RuleResult.Violation(null, "Bucket has a public-read ACL"));
             }
             if (compliancy == RuleResult.Compliancy.COMPLIANT && scanContents) {
                 //Scan files
@@ -107,7 +109,7 @@ public class S3PublicReadProhibitedRule implements S3Rule {
                         AccessControlList acls = secondaryS3Client.getObjectAcl(bucket.getName(), objectSummary.getKey());
                         if (!checkGrantList(acls.getGrantsAsList())) {
                             compliancy = RuleResult.Compliancy.NONCOMPLIANT;
-                            break;
+                            violations.add(new RuleResult.Violation(objectSummary.getKey(), "Object has a public-read ACL"));
                         }
                     }
                     // If there are more than maxKeys keys in the bucket, get a continuation token
@@ -121,8 +123,10 @@ public class S3PublicReadProhibitedRule implements S3Rule {
                 new RuleResult(
                     s3Connection.getConnectionName(),
                     S3Rule.RESOURCE_TYPE,
+                    region,
                     bucket.getName(),
-                    compliancy
+                    compliancy,
+                    violations
                 )
             );
         }
