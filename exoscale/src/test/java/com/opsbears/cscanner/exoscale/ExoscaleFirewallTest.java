@@ -83,7 +83,6 @@ public class ExoscaleFirewallTest {
         assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
     }
 
-
     @Test
     public void testNonCompliantSecurityGroup() {
         //Setup
@@ -110,6 +109,39 @@ public class ExoscaleFirewallTest {
             .stream()
             .filter(result -> result.connectionName.equals("exo"))
             .filter(result -> result.resourceName.equalsIgnoreCase("noncompliant"))
+            .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
+            .collect(Collectors.toList());
+
+        assertEquals(1, filteredResults.size());
+        assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+    }
+
+    @Test
+    public void testProtocolAll() {
+        //Setup
+        testClient.ensureSecurityGroupExists("protocol-all");
+        testClient.ensureRuleExists("protocol-all", "all", Arrays.asList("0.0.0.0/0"), null, null, null, null);
+        List<RuleConfiguration> rules = new ArrayList<>();
+        Map<String, Object> options = new HashMap<>();
+        options.put("protocol", "tcp");
+        options.put("ports", Arrays.asList(22));
+        rules.add(new RuleConfiguration(
+            FirewallPublicServiceProhibitedRule.RULE,
+            new ArrayList<>(),
+            options
+        ));
+        ScannerCore scannerCore = createScannerCore(
+            rules
+        );
+
+        //Execute
+        List<RuleResult> results = scannerCore.scan();
+
+        //Assert
+        List<RuleResult> filteredResults = results
+            .stream()
+            .filter(result -> result.connectionName.equals("exo"))
+            .filter(result -> result.resourceName.equalsIgnoreCase("protocol-all"))
             .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
             .collect(Collectors.toList());
 

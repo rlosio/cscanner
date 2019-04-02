@@ -68,11 +68,16 @@ public class ExoscaleFirewallClient implements FirewallClient {
         for (int i = 0; i < rules.size(); i++) {
             JsonObject rule = rules.get(i).getAsJsonObject();
 
-            int protocol = protocols.getProtocolIdByName(rule.get("protocol").getAsString());
+            Integer protocol;
             Integer fromPort = null;
             Integer toPort = null;
             Integer icmpType = null;
             Integer icmpCode = null;
+            if (rule.get("protocol").getAsString().equalsIgnoreCase("all")) {
+                protocol = null;
+            } else {
+                protocol = protocols.getProtocolIdByName(rule.get("protocol").getAsString());
+            }
             String cidr = null;
             String securityGroupName = null;
             if (rule.has("startport")) {
@@ -80,6 +85,10 @@ public class ExoscaleFirewallClient implements FirewallClient {
             }
             if (rule.has("endport")) {
                 toPort = rule.get("endport").getAsInt();
+            }
+            if (fromPort != null && toPort != null && fromPort == 0 && toPort == 0 && protocol == null) {
+                fromPort = null;
+                toPort = null;
             }
             if (rule.has("cidr")) {
                 cidr = rule.get("cidr").getAsString();

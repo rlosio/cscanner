@@ -64,9 +64,9 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
             boolean compliant = true;
             for (Integer port : ports) {
                 for (FirewallRule firewallRule : firewallGroup.firewallRules) {
-                    if (firewallRule.fromPort != null
+                    if (
+                        ((firewallRule.fromPort != null
                         && firewallRule.toPort != null
-                        && firewallRule.cidr != null
                         && firewallRule.fromPort <= port
                         && firewallRule.toPort >= port
                         && (
@@ -75,7 +75,12 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
                                 firewallRule.protocolNumber,
                                 protocol
                             )
-                        )
+                        )) || (
+                            firewallRule.protocolNumber == null &&
+                                firewallRule.fromPort == null &&
+                                firewallRule.toPort == null
+                            ))
+                        && firewallRule.cidr != null
                         && firewallRule.direction == FirewallRule.Direction.INGRESS
                         && (
                             firewallRule.cidr.equalsIgnoreCase("0.0.0.0/0")
