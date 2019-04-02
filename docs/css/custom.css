@@ -10,3 +10,9 @@ html .rst-content .note .admonition-title {
 html .rst-content .note {
     background-color: #d2e0f0ff;
 }
+
+@media screen and (max-width: 768px) {
+    html img {
+        width: auto
+    }
+}
