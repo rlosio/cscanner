@@ -1,0 +1,7 @@
+---
+- include: memcached.yaml
+- include: mongodb.yaml
+- include: mssql.yaml
+- include: mysql.yaml
+- include: postgresql.yaml
+- include: redis.yaml

@@ -1,0 +1,6 @@
+---
+- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+  protocol: tcp
+  ports:
+  - 2379
+  - 2380
