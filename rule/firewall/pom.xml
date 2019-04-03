@@ -7,6 +7,7 @@
         <artifactId>parent</artifactId>
         <groupId>com.opsbears.cscanner</groupId>
         <version>master-SNAPSHOT</version>
+        <relativePath>../../</relativePath>
     </parent>
     <artifactId>firewall</artifactId>
     <name>IAAS bindings for CScanner</name>
