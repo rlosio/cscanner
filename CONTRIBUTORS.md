@@ -1,7 +1,7 @@
 # Codebase
 
-- Janos Pasztor @janoszen
+- Janos Pasztor [@janoszen](https://github.com/janoszen)
 
 # Artwork
 
-- Norbert Papp @norbertpapp
+- Norbert Papp [@norbertpapp](https://github.com/norbertpapp)
