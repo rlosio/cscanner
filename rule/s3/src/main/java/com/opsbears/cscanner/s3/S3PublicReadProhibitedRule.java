@@ -6,7 +6,6 @@ import com.opsbears.cscanner.core.CScannerParameter;
 import com.opsbears.cscanner.core.EmptyListSupplier;
 import com.opsbears.cscanner.core.FalseSupplier;
 import com.opsbears.cscanner.core.RuleResult;
-import sun.invoke.empty.Empty;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
