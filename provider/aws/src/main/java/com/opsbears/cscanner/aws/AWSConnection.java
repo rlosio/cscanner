@@ -12,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class AWSConnection implements CloudProviderConnection, S3Connection, FirewallConnection {
     private final String name;
     private final AWSConfiguration awsConfiguration;
+    private final AWSFirewallClient awsFirewallClient;
 
     public AWSConnection(
         String name,
@@ -19,6 +20,8 @@ public class AWSConnection implements CloudProviderConnection, S3Connection, Fir
     ) {
         this.name = name;
         this.awsConfiguration = awsConfiguration;
+
+        awsFirewallClient = new AWSFirewallClient(awsConfiguration);
     }
 
     @Override
@@ -33,6 +36,6 @@ public class AWSConnection implements CloudProviderConnection, S3Connection, Fir
 
     @Override
     public FirewallClient getFirewallClient() {
-        return new AWSFirewallClient(awsConfiguration);
+        return awsFirewallClient;
     }
 }

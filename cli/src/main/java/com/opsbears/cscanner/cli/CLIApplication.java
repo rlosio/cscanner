@@ -12,6 +12,7 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
@@ -51,6 +52,26 @@ public class CLIApplication {
             .help("Only output noncompliant rules. Conflicts with compliant.");
 
         parser
+            .addArgument("-v")
+            .type(Boolean.class)
+            .setDefault(false)
+            .action(Arguments.storeTrue())
+            .help("Set log level to 'warning'.");
+
+        parser
+            .addArgument("-vv")
+            .type(Boolean.class)
+            .setDefault(false)
+            .action(Arguments.storeTrue())
+            .help("Set log level to 'info'.");
+        parser
+            .addArgument("-vvv")
+            .type(Boolean.class)
+            .setDefault(false)
+            .action(Arguments.storeTrue())
+            .help("Set log level to 'debug'.");
+
+        parser
             .addArgument("FILE")
             .type(String.class)
             .help("Configuration file to read.");
@@ -73,6 +94,16 @@ public class CLIApplication {
         }
 
         String file = ns.getString("FILE");
+
+        if (ns.getBoolean("vvv")) {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+        } else if (ns.getBoolean("vv")) {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+        } else if (ns.getBoolean("vvv")) {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
+        } else {
+            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
+        }
 
         ScannerCore scannerCore = new ScannerCore(Arrays.asList(
             new YamlPlugin(file),

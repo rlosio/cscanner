@@ -9,6 +9,8 @@ import com.opsbears.cscanner.firewall.FirewallClient;
 import com.opsbears.cscanner.firewall.FirewallGroup;
 import com.opsbears.cscanner.firewall.FirewallRule;
 import com.opsbears.cscanner.firewall.Protocols;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -17,8 +19,10 @@ import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 public class AWSFirewallClient implements FirewallClient {
+    private final static Logger logger = LoggerFactory.getLogger(AWSFirewallClient.class);
     private final AWSConfiguration awsConfiguration;
     private final Protocols protocols = Protocols.getInstance();
+    private final List<FirewallGroup> firewallGroupCache = new ArrayList<>();
 
     public AWSFirewallClient(AWSConfiguration awsConfiguration) {
         this.awsConfiguration = awsConfiguration;
@@ -28,7 +32,8 @@ public class AWSFirewallClient implements FirewallClient {
         return "arn:aws:ec2:" + region.getName() + ":" + accountId + ":security-group/" + securityGroupId;
     }
 
-    private List<FirewallRule> getFirewallRules(Regions region, String accountId, SecurityGroup securityGroup, List<IpPermission> permissions, FirewallRule.Direction direction) {
+    private List<FirewallRule> extractFirewallRules(Regions region, String accountId, SecurityGroup securityGroup, List<IpPermission> permissions, FirewallRule.Direction direction) {
+        logger.debug("Converting firewall rules in region " + region + " for security group " + securityGroup.getGroupName() + " " + direction + "...");
         List<FirewallRule> firewallRules = new ArrayList<>();
         for (IpPermission permission : permissions) {
             for (IpRange ipvRange : permission.getIpv4Ranges()) {
@@ -74,20 +79,21 @@ public class AWSFirewallClient implements FirewallClient {
                 ));
             }
         }
+        logger.debug("Conversion complete, " + firewallRules.size() + " rules returned.");
         return firewallRules;
     }
 
     private FirewallGroup convert(Regions region, String accountId, SecurityGroup securityGroup) {
         List<FirewallRule> firewallRules = new ArrayList<>();
 
-        firewallRules.addAll(getFirewallRules(
+        firewallRules.addAll(extractFirewallRules(
             region,
             accountId,
             securityGroup,
             securityGroup.getIpPermissions(),
             FirewallRule.Direction.INGRESS
         ));
-        firewallRules.addAll(getFirewallRules(
+        firewallRules.addAll(extractFirewallRules(
             region,
             accountId,
             securityGroup,
@@ -106,8 +112,12 @@ public class AWSFirewallClient implements FirewallClient {
     public List<FirewallGroup> listFirewallGroups() {
         String accountId = awsConfiguration.getAccountId();
         List<FirewallGroup> firewallGroups = new ArrayList<>();
+        if (!firewallGroupCache.isEmpty()) {
+            return firewallGroupCache;
+        }
         for (Regions region : Regions.values()) {
             try {
+                logger.debug("Fetching firewall groups for region " + region.getName() + "...");
                 AmazonEC2ClientBuilder builder = AmazonEC2ClientBuilder.standard();
                 builder.withCredentials(awsConfiguration.getCredentialsProvider());
                 builder.withRegion(region);
@@ -128,10 +138,14 @@ public class AWSFirewallClient implements FirewallClient {
                     );
                     nextToken = describeSecurityGroups.getNextToken();
                 } while (nextToken != null);
+                logger.warn("Region fetch complete.");
             } catch (AmazonClientException clientException) {
                 //Region must be disabled
+                logger.warn("Failed to fetch region " + region + " despite good credentials, region probably disabled or missing permissions.");
             }
         }
+
+        firewallGroupCache.addAll(firewallGroups);
 
         return firewallGroups;
     }

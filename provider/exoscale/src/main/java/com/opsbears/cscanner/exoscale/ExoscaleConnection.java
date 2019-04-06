@@ -12,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class ExoscaleConnection implements CloudProviderConnection, S3Connection, FirewallConnection {
     private final String name;
     private final ExoscaleConfiguration exoscaleConfiguration;
+    private final ExoscaleFirewallClient exoscaleFirewallClient;
 
     public ExoscaleConnection(
         String name,
@@ -20,6 +21,11 @@ public class ExoscaleConnection implements CloudProviderConnection, S3Connection
         this.name = name;
 
         this.exoscaleConfiguration = exoscaleConfiguration;
+        //todo handle cloudstack config
+        exoscaleFirewallClient = new ExoscaleFirewallClient(
+            exoscaleConfiguration.key,
+            exoscaleConfiguration.secret
+        );
     }
 
     @Override
@@ -34,10 +40,6 @@ public class ExoscaleConnection implements CloudProviderConnection, S3Connection
 
     @Override
     public FirewallClient getFirewallClient() {
-        //todo handle cloudstack config
-        return new ExoscaleFirewallClient(
-            exoscaleConfiguration.key,
-            exoscaleConfiguration.secret
-        );
+        return exoscaleFirewallClient;
     }
 }

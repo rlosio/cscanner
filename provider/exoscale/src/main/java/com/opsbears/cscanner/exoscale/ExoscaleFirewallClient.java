@@ -20,6 +20,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
     private final Protocols protocols = Protocols.getInstance();
     private final String apiKey;
     private final String apiSecret;
+    private final List<FirewallGroup> firewallGroupsCache = new ArrayList<>();
 
     public ExoscaleFirewallClient(
         String apiKey,
@@ -31,6 +32,10 @@ public class ExoscaleFirewallClient implements FirewallClient {
 
     @Override
     public List<FirewallGroup> listFirewallGroups() {
+        if (!firewallGroupsCache.isEmpty()) {
+            return firewallGroupsCache;
+        }
+
         ApacheCloudStackUser apacheCloudStackUser = new ApacheCloudStackUser(apiSecret, apiKey);
         ApacheCloudStackClient apacheCloudStackClient = new ApacheCloudStackClient("https://api.exoscale.ch/compute", apacheCloudStackUser);
 
@@ -60,6 +65,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
                 firewallRules
             ));
         }
+        firewallGroupsCache.addAll(firewallGroups);
         return firewallGroups;
     }
 
@@ -130,6 +136,7 @@ public class ExoscaleFirewallClient implements FirewallClient {
                 FirewallRule.Rule.ALLOW
             ));
         }
+
         return firewallRules;
     }
 }
