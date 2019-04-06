@@ -86,6 +86,50 @@ limit the rule to only certian connections. The default is to use all connection
 If a certain cloud provider doesn't support a specific functionality, that cloud provider will be simply skipped for
 the specified rule.
 
+### Includes
+
+The configuration supports includes. These includes can either be local files, or http/https URLs. Include files can
+include other files.
+
+For connections they work as follows:
+
+```yaml
+---
+connections:
+  include:
+    - config-file-1.yaml
+    - https://example.com/config-file-2.yaml
+  exoscale-test:
+    type: exoscale
+    key: ""
+    secret: ""
+rules:
+  # ...
+```
+
+In other words you have one include key and you need to list all files you want to load.
+
+For rules it works a little different:
+
+```yaml
+connections:
+  # ...
+rules:
+  - include: config-file-1.yaml
+  - include: https://example.com/config-file-2.yaml
+  - type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+    protocol: tcp
+    ports:
+      - 22
+```
+
+Note that both for connections and rules the target config file only needs to have a list of connections / rules, NOT 
+the `connections` or `rules` key.
+
+!!! note
+    At this time there is no way to restrict included rules to a certain resource name as the resource filtering is done
+    on a per-rule basis.
+
 ## Supported cloud providers
 
 Currently the following cloud providers are supported:
