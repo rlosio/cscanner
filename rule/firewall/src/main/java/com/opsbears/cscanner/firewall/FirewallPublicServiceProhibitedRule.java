@@ -1,8 +1,8 @@
 package com.opsbears.cscanner.firewall;
 
-import com.opsbears.cscanner.core.Rule;
-import com.opsbears.cscanner.core.RuleResult;
+import com.opsbears.cscanner.core.*;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +18,12 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
     public final List<Pattern> exclude;
 
     public FirewallPublicServiceProhibitedRule(
-        Integer protocol,
-        List<Integer> ports,
-        List<Pattern> include,
-        List<Pattern> exclude
+        Options options
     ) {
-        this.protocol = protocol;
-        this.ports = ports;
-        this.include = include;
-        this.exclude = exclude;
+        this.protocol = options.protocol;
+        this.ports = options.ports;
+        this.include = options.include;
+        this.exclude = options.exclude;
     }
 
     @Override
@@ -112,5 +109,82 @@ public class FirewallPublicServiceProhibitedRule implements Rule<FirewallConnect
             );
         }
         return results;
+    }
+
+    public static class Options {
+        public final Integer protocol;
+        public final List<Integer> ports;
+        public final List<Pattern> include;
+        public final List<Pattern> exclude;
+
+        public Options(
+            @CScannerParameter(
+                value = "protocol",
+                defaultSupplier = NullSupplier.class,
+                description = "Protocol number"
+            )
+            @Nullable
+            Integer protocol,
+            @CScannerParameter(
+                value = "ports",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Ports to scan for public accessibility"
+            )
+            List<Integer> ports,
+            @CScannerParameter(
+                value = "include",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Regular expression on firewall group names to include in this rule."
+            )
+            List<Pattern> include,
+            @CScannerParameter(
+                value = "exclude",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Regular expression on firewall group names to exclude from this rule. Exclude takes precedence over include"
+            )
+            List<Pattern> exclude
+        ) {
+            this.protocol = protocol;
+            this.ports = ports;
+            this.include = include;
+            this.exclude = exclude;
+        }
+
+        public Options(
+            @CScannerParameter(
+                value = "protocol",
+                defaultSupplier = NullSupplier.class,
+                description = "Protocol name"
+            )
+                @Nullable
+                String protocol,
+            @CScannerParameter(
+                value = "ports",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Ports to scan for public accessibility"
+            )
+                List<Integer> ports,
+            @CScannerParameter(
+                value = "include",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Regular expression on firewall group names to include in this rule."
+            )
+                List<Pattern> include,
+            @CScannerParameter(
+                value = "exclude",
+                defaultSupplier = EmptyListSupplier.class,
+                description = "Regular expression on firewall group names to exclude from this rule. Exclude takes precedence over include"
+            )
+                List<Pattern> exclude
+        ) {
+            if (protocol != null) {
+                this.protocol = Protocols.getInstance().getProtocolIdByName(protocol);
+            } else {
+                this.protocol = null;
+            }
+            this.ports = ports;
+            this.include = include;
+            this.exclude = exclude;
+        }
     }
 }

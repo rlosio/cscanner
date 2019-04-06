@@ -30,7 +30,9 @@ public class YamlConfigLoader implements ConfigLoader {
             String sCurrentLine;
 
             while ((sCurrentLine = br.readLine()) != null) {
-                yamlData.append(sCurrentLine + "\n");
+                yamlData
+                    .append(sCurrentLine)
+                    .append("\n");
             }
 
         } catch (IOException e) {

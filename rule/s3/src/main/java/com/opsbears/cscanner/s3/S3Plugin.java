@@ -10,7 +10,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class S3Plugin implements Plugin {
     @Override
-    public List<RuleBuilder<?, ?>> getSupportedRules() {
+    public List<RuleBuilder<?, ?, ?>> getSupportedRules() {
         //noinspection unchecked
         return Arrays.asList(
             new S3PublicReadProhibitedRuleBuilder()

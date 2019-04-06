@@ -27,16 +27,10 @@ public class AWSCloudProvider implements CloudProvider<AWSConfiguration, AWSConn
     @Override
     public AWSConnection getConnection(
         String name,
-        Map<String, Object> configuration
+        AWSConfiguration configuration
     ) {
-        AWSConfiguration awsConfiguration = new AWSConfiguration(
-            (String)configuration.getOrDefault("accessKeyId", null),
-            (String)configuration.getOrDefault("secretAccessKey", null),
-            (String)configuration.getOrDefault("sessionToken", null),
-            (String)configuration.getOrDefault("profile", null)
-        );
-        awsConfiguration.validateCredentials();
+        configuration.validateCredentials();
 
-        return new AWSConnection(name, awsConfiguration);
+        return new AWSConnection(name, configuration);
     }
 }

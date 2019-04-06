@@ -33,7 +33,17 @@ public class YourConfiguration {
     public final String secret;
 
     public YourConfiguration(
+        @CScannerParameter(
+            value = "key",
+            defaultSupplier = NullSupplier.class,
+            description = "API key"
+        )
         @Nullable String key,
+        @CScannerParameter(
+            value = "secret",
+            defaultSupplier = NullSupplier.class,
+            description = "API secret"
+        )
         @Nullable String secret
     ) {
         this.key = key;
@@ -42,8 +52,10 @@ public class YourConfiguration {
 }
 ```
 
-This is very plain and simple and only serves to store the configuration relevant to your cloud provider. This
-configuration class will be filled in your cloud provider class later.
+This is very plain and simple and only serves to store the configuration relevant to your cloud provider. This 
+configuration will be filled by the system automatically based on the config file. Note that the default parameter value
+has to be provided as a class reference to a subclass of `Supplier`. The supplier class can return the default value, 
+and a couple of default classes have been provided.
 
 ## The connection class
 
@@ -79,25 +91,20 @@ your configuration.
 Now we have reached the point to implement some functions in our cloud provider class, most importantly reading
 the configuration.
 
-You will receive the configuration for your provider as a `Map<String, Object>`. Keep in mind that the configuration
-comes from a YAML, JSON, etc file so it is your responsibility to vet the content and make sure you have the
-correct data types.
+You will receive the configuration for your provider as an instance of the configuration class you have specified.
+The configuration reader automatically converts the input configuration from YAML, JSON, etc. into the class you have
+specified based on your `@CScannerParameter` annotations.
 
-For example
+For example:
 
 ```java
 public class YourCloudProvider implements CloudProvider<YourConfiguration, YourConnection> {
     @Override
     public YourConnection getConnection(
         String name,
-        Map<String, Object> configuration
+        YourConfiguration configuration
     ) {
-        YourConfiguration configObject = new YourConfiguration(
-            (String) configuration.getOrDefault("key", null),
-            (String) configuration.getOrDefault("secret", null)
-        );
-
-        return new YourConnection(name, configObject);
+        return new YourConnection(name, configuration);
     }
 }
 ```

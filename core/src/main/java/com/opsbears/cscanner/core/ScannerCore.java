@@ -3,9 +3,12 @@ package com.opsbears.cscanner.core;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
+//todo this is too long / too many responsibilities, refactor and split
 @ParametersAreNonnullByDefault
 public class ScannerCore {
     private final List<Plugin> plugins;
+    private final CloudProviderConnectionFactory cloudProviderConnectionFactory = new CloudProviderConnectionFactory();
+    private final RuleFactory ruleFactory = new RuleFactory();
 
     public ScannerCore(List<Plugin> plugins) {
         this.plugins = plugins;
@@ -15,7 +18,7 @@ public class ScannerCore {
         //region Plugins
         List<ConfigLoader> configLoaders = new ArrayList<>();
         List<CloudProvider<?, ?>> cloudProviders = new ArrayList<>();
-        List<RuleBuilder<?, ?>> ruleBuilders = new ArrayList<>();
+        List<RuleBuilder<?, ?, ?>> ruleBuilders = new ArrayList<>();
         for (Plugin plugin : plugins) {
             configLoaders.addAll(plugin.getConfigLoaders());
             cloudProviders.addAll(plugin.getCloudProviders());
@@ -48,7 +51,11 @@ public class ScannerCore {
             cloudProviderByConnectionKey.put(connectionKey, cloudProvider.get());
             cloudProviderConnectionMap.put(
                 connectionKey,
-                cloudProvider.get().getConnection(connectionKey, connectionConfigurations.get(connectionKey).options)
+                cloudProviderConnectionFactory.create(
+                    cloudProvider.get(),
+                    connectionKey,
+                    connectionConfigurations.get(connectionKey).options
+                )
             );
         }
         //endregion
@@ -60,7 +67,7 @@ public class ScannerCore {
             List<String> ruleConnections = ruleConfiguration.connections;
             Map<String, Object> ruleOptions = ruleConfiguration.options;
 
-            Optional<RuleBuilder<?, ?>> ruleBuilder = ruleBuilders
+            Optional<RuleBuilder<?, ?, ?>> ruleBuilder = ruleBuilders
                 .stream()
                 .filter(rb -> rb.getType().equalsIgnoreCase(ruleType))
                 .findFirst();
@@ -72,7 +79,7 @@ public class ScannerCore {
             if (ruleConnections.isEmpty()) {
                 ruleConnections.addAll(cloudProviderByConnectionKey.keySet());
             }
-            Rule rule = ruleBuilder.get().create(ruleOptions);
+            Rule rule = ruleFactory.create(ruleBuilder.get(), ruleOptions);
 
             for (String ruleConnection : ruleConnections) {
                 if (!cloudProviderByConnectionKey.containsKey(ruleConnection)) {
@@ -93,4 +100,5 @@ public class ScannerCore {
 
         return result;
     }
+
 }

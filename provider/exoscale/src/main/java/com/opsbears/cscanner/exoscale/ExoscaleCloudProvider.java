@@ -28,15 +28,8 @@ public class ExoscaleCloudProvider implements CloudProvider<ExoscaleConfiguratio
     @Override
     public ExoscaleConnection getConnection(
         String name,
-        Map<String, Object> configuration
+        ExoscaleConfiguration configuration
     ) {
-        ExoscaleConfiguration exoscaleConfiguration = new ExoscaleConfiguration(
-            (String) configuration.getOrDefault("key", null),
-            (String) configuration.getOrDefault("secret", null),
-            (String) configuration.getOrDefault("cloudStackConfig", null),
-            (String) configuration.getOrDefault("profile", null)
-        );
-
-        return new ExoscaleConnection(name, exoscaleConfiguration);
+        return new ExoscaleConnection(name, configuration);
     }
 }

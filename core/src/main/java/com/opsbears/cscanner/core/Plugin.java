@@ -10,7 +10,7 @@ public interface Plugin {
         return Collections.emptyList();
     }
 
-    default List<RuleBuilder<?, ?>> getSupportedRules() {
+    default List<RuleBuilder<?, ?, ?>> getSupportedRules() {
         return Collections.emptyList();
     }
 

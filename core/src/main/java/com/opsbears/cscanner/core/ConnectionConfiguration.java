@@ -3,6 +3,7 @@ package com.opsbears.cscanner.core;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
 public class ConnectionConfiguration {
     public final String type;
     public final Map<String, Object> options;

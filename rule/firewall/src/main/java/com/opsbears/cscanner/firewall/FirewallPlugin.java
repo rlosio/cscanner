@@ -10,7 +10,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class FirewallPlugin implements Plugin {
     @Override
-    public List<RuleBuilder<?, ?>> getSupportedRules() {
+    public List<RuleBuilder<?, ?, ?>> getSupportedRules() {
         return Arrays.asList(
             new FirewallPublicServiceProhibitedRuleBuilder()
         );

@@ -2,8 +2,13 @@ package com.opsbears.cscanner.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.opsbears.cscanner.core.CScannerParameter;
+import com.opsbears.cscanner.core.EmptyListSupplier;
+import com.opsbears.cscanner.core.FalseSupplier;
 import com.opsbears.cscanner.core.RuleResult;
+import sun.invoke.empty.Empty;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +21,12 @@ public class S3PublicReadProhibitedRule implements S3Rule {
     private final List<Pattern> include;
     private final List<Pattern> exclude;
 
-    /**
-     * @param scanContents
-     * @param include Regular expressions of buckets to include from this type.
-     * @param exclude Regular expression of buckets to exclude from this type.
-     */
     public S3PublicReadProhibitedRule(
-        boolean scanContents,
-        List<Pattern> include,
-        List<Pattern> exclude
+        Options options
     ) {
-        this.scanContents = scanContents;
-        this.include = include;
-        this.exclude = exclude;
+        this.scanContents = options.scanContents;
+        this.include = options.include;
+        this.exclude = options.exclude;
     }
 
     private boolean checkGrantList(List<Grant> grants) {
@@ -106,10 +104,16 @@ public class S3PublicReadProhibitedRule implements S3Rule {
                     result = secondaryS3Client.listObjectsV2(req);
 
                     for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
-                        AccessControlList acls = secondaryS3Client.getObjectAcl(bucket.getName(), objectSummary.getKey());
+                        AccessControlList acls = secondaryS3Client.getObjectAcl(
+                            bucket.getName(),
+                            objectSummary.getKey()
+                        );
                         if (!checkGrantList(acls.getGrantsAsList())) {
                             compliancy = RuleResult.Compliancy.NONCOMPLIANT;
-                            violations.add(new RuleResult.Violation(objectSummary.getKey(), "Object has a public-read ACL"));
+                            violations.add(new RuleResult.Violation(
+                                objectSummary.getKey(),
+                                "Object has a public-read ACL"
+                            ));
                         }
                     }
                     // If there are more than maxKeys keys in the bucket, get a continuation token
@@ -131,5 +135,39 @@ public class S3PublicReadProhibitedRule implements S3Rule {
             );
         }
         return results;
+    }
+
+    public static class Options {
+        @Nullable
+        public final boolean scanContents;
+        @Nullable
+        public final List<Pattern> include;
+        @Nullable
+        public final List<Pattern> exclude;
+
+        public Options(
+            @CScannerParameter(
+                value = "scanContents",
+                description = "Can the contents of S3 buckets for ACL violations. Keep in mind that this can take a long time.",
+                defaultSupplier = FalseSupplier.class
+            )
+                boolean scanContents,
+            @CScannerParameter(
+                value = "include",
+                description = "A list of bucket regexps to include.",
+                defaultSupplier = EmptyListSupplier.class
+            )
+                List<Pattern> include,
+            @CScannerParameter(
+                value = "exclude",
+                description = "A list of bucket regexps to exclude. Exclude takes precedence over include.",
+                defaultSupplier = EmptyListSupplier.class
+            )
+                List<Pattern> exclude
+        ) {
+            this.scanContents = scanContents;
+            this.include = include;
+            this.exclude = exclude;
+        }
     }
 }
