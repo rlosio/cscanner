@@ -7,13 +7,10 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.parser.ParserException;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 @ParametersAreNonnullByDefault
 public class YamlConfigLoader implements ConfigLoader {
@@ -23,9 +20,9 @@ public class YamlConfigLoader implements ConfigLoader {
         this.filename = filename;
     }
 
-    private Map<String, Object> loadConfigurationFile(String file) {
+    private Object loadConfigurationFile(URL url) {
         StringBuilder yamlData = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
 
             String sCurrentLine;
 
@@ -40,21 +37,53 @@ public class YamlConfigLoader implements ConfigLoader {
         }
         Yaml yaml = new Yaml();
         try {
-            Object data = yaml.load(yamlData.toString());
-            if (data instanceof Map) {
-                //noinspection unchecked
-                return (Map<String, Object>) data;
-            } else {
-                throw new RuntimeException("Invalid data type in YAML file.");
-            }
+            return yaml.load(yamlData.toString());
         } catch (ParserException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
+    private Map<String, Object> loadConfigurationFileMap(URL file) {
+        Object data = loadConfigurationFile(file);
+        if (data instanceof Map) {
+            //noinspection unchecked
+            return (Map<String, Object>) data;
+        } else {
+            throw new RuntimeException("Invalid data type in YAML file.");
+        }
+    }
+
+    private Map<Object, Object> loadConnectionIncludes(URL context, Map<Object, Object> connectionsMap) {
+        connectionsMap = new HashMap<>(connectionsMap);
+        if (connectionsMap.containsKey("include") && connectionsMap.get("include") instanceof Collection) {
+            connectionsMap.remove("include");
+            for (Object include : (Collection)connectionsMap.get("include")) {
+                if (!(include instanceof String)) {
+                    throw new RuntimeException("Encountered " + include.getClass().getSimpleName() + " in 'include' key in connections, expected string");
+                }
+
+                try {
+                    URL newUrl = new URL(context, (String) include);
+                    Map<Object, Object> newYamlData = new HashMap<>(loadConfigurationFileMap(newUrl));
+                    connectionsMap.putAll(loadConnectionIncludes(newUrl, newYamlData));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return connectionsMap;
+    }
+
     @Override
     public Map<String, ConnectionConfiguration> loadConnectionConfigurations() {
-        Map<String, Object> yamlData = loadConfigurationFile(filename);
+        Map<String, Object> yamlData;
+        URL url;
+        try {
+            url = new File(filename).toURL();
+            yamlData = loadConfigurationFileMap(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         Map<String, ConnectionConfiguration> result = new HashMap<>();
         if (yamlData.containsKey("connections")) {
             Object connections = yamlData.get("connections");
@@ -63,6 +92,10 @@ public class YamlConfigLoader implements ConfigLoader {
             }
             //noinspection unchecked
             Map<Object, Object> connectionsMap = (Map<Object, Object>) connections;
+
+            //Process includes
+            connectionsMap = loadConnectionIncludes(url, connectionsMap);
+
             for (Object key : connectionsMap.keySet()) {
                 String keyName = key.toString();
                 Object connectionsData = connectionsMap.get(key);
@@ -79,17 +112,58 @@ public class YamlConfigLoader implements ConfigLoader {
                 if (!(type instanceof String)) {
                     throw new RuntimeException("Expected to find a string for the key 'type' on connection " + keyName + ", " + type.getClass().getSimpleName() + " found instead");
                 }
-                connectionsDataMap.remove(type);
+                connectionsDataMap.remove("type");
                 result.put(keyName, new ConnectionConfiguration((String)type, connectionsDataMap));
             }
         }
         return result;
     }
 
+    private List<Object> loadRuleIncludes(URL context, List<Object> rules) {
+        rules = new ArrayList<>(rules);
+        List<Object> rulesToRemove = new ArrayList<>();
+        List<String> urlsToLoad = new ArrayList<>();
+        for (Object rule : rules) {
+            if (rule instanceof Map && ((Map) rule).size() == 1 && ((Map) rule).containsKey("include")) {
+                Object includeTarget = ((Map) rule).get("include");
+                if (!(includeTarget instanceof String)) {
+                    throw new RuntimeException("Expected string for key 'include', found " + includeTarget.getClass().getSimpleName() + " instead.");
+                }
+
+                urlsToLoad.add((String) includeTarget);
+                rulesToRemove.add(rule);
+            }
+        }
+        for (Object rule : rulesToRemove) {
+            rules.remove(rule);
+        }
+        for (String urlString : urlsToLoad) {
+            try {
+                URL newUrl = new URL(context, urlString);
+                Object yamlData = loadConfigurationFile(newUrl);
+                if (!(yamlData instanceof Collection)) {
+                    throw new RuntimeException("Expected list in included file " + newUrl.toString() + " found " + yamlData.getClass().getSimpleName() + " instead.");
+                }
+                rules.addAll((Collection) yamlData);
+                rules = loadRuleIncludes(newUrl, rules);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return rules;
+    }
+
     @Override
     public List<RuleConfiguration> loadRuleConfigurations() {
         List<RuleConfiguration> result = new ArrayList<>();
-        Map<String, Object> yamlData = loadConfigurationFile(filename);
+        Map<String, Object> yamlData = null;
+        URL url;
+        try {
+            url = new File(filename).toURL();
+            yamlData = loadConfigurationFileMap(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         if (yamlData.containsKey("rules")) {
             Object rules = yamlData.get("rules");
             if (!(rules instanceof List)) {
@@ -97,6 +171,8 @@ public class YamlConfigLoader implements ConfigLoader {
             }
             //noinspection unchecked
             List<Object> ruleList = (List<Object>) rules;
+
+            ruleList = loadRuleIncludes(url, ruleList);
 
             for (int i = 0; i < ruleList.size(); i++) {
                 Object rule = ruleList.get(i);

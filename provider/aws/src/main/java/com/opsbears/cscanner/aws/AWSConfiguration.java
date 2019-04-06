@@ -7,6 +7,7 @@ import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityResult;
 import com.opsbears.cscanner.core.CScannerParameter;
+import com.opsbears.cscanner.core.NullSupplier;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -23,16 +24,32 @@ public class AWSConfiguration {
 
     public AWSConfiguration(
         @Nullable
-        @CScannerParameter(value = "accessKeyId", description = "The AWS access key ID to use. Leave empty for default AWS behavior.")
+        @CScannerParameter(
+            value = "accessKeyId",
+            description = "The AWS access key ID to use. Leave empty for default AWS behavior.",
+            defaultSupplier = NullSupplier.class
+        )
         String accessKeyId,
         @Nullable
-        @CScannerParameter(value = "secretAccessKey", description = "The AWS secret access key to use. Leave empty for default AWS behavior.")
+        @CScannerParameter(
+            value = "secretAccessKey",
+            description = "The AWS secret access key to use. Leave empty for default AWS behavior.",
+            defaultSupplier = NullSupplier.class
+        )
         String secretAccessKey,
         @Nullable
-        @CScannerParameter(value = "sessionToken", description = "The AWS session token to use. Leave empty for default AWS behavior.")
+        @CScannerParameter(
+            value = "sessionToken",
+            description = "The AWS session token to use. Leave empty for default AWS behavior.",
+            defaultSupplier = NullSupplier.class
+        )
         String sessionToken,
         @Nullable
-        @CScannerParameter(value = "profile", description = "The profile to use from the AWS config file. Leave empty for default AWS behavior.")
+        @CScannerParameter(
+            value = "profile",
+            description = "The profile to use from the AWS config file. Leave empty for default AWS behavior.",
+            defaultSupplier = NullSupplier.class
+        )
         String profile
     ) {
         this.accessKeyId = accessKeyId;
