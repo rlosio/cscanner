@@ -22,3 +22,7 @@
 <meta name="HandheldFriendly" content="true" />
 <meta name="msapplication-TileImage" content="{{ config.site_url }}img/tileicon.png' | url }}" />
 {% endblock %}
+
+{%- block site_name %}
+<a href="{{ nav.homepage.url|url }}" class="logo"><img src="img/header.svg" alt="{{ config.site_name }}" /></a>
+{%- endblock %}

@@ -16,3 +16,14 @@ html .rst-content .note {
         width: auto
     }
 }
+
+.wy-side-nav-search>a.logo {
+    display:block;
+}
+.wy-side-nav-search>a.logo img {
+    width:100%;
+    height:auto;
+    border-radius: 0;
+    margin:0;
+    background:transparent;
+}
