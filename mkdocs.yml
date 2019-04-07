@@ -22,7 +22,8 @@ nav:
   - 'Contributing to CScanner': 'development/index.md'
   - 'Writing a Provider': 'development/provider.md'
   - 'Writing a Rule': 'development/rule.md'
-- 'About this Site':
+- 'About CScanner':
+  - 'License': 'license.md'
   - 'Imprint': 'imprint.md'
   - 'Privacy Policy': 'privacy.md'
   - 'Contributors': 'contributors.md'
@@ -30,6 +31,6 @@ site_favicon: img/favicon.png
 extra_css:
   - css/custom.css
 copyright: >
-  <a href="https://github.com/janoszen/cscanner/blob/master/LICENSE">Copyright &copy; Janos Pasztor and Contributors</a>
+  <a href="/license/">Copyright &copy; Janos Pasztor and Contributors</a>
   | <a href="/imprint/">Imprint</a>
   | <a href="/privacy/">Privacy Policy</a>
