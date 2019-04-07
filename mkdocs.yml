@@ -13,8 +13,8 @@ nav:
 - 'Home': 'index.md'
 - 'Downloads': 'downloads.md'
 - 'Cloud providers':
-  - 'Amazon Web Services': 'clouds/aws.md'
-  - 'Exoscale': 'clouds/exoscale.md'
+  - 'Amazon Web Services': 'providers/aws.md'
+  - 'Exoscale': 'providers/exoscale.md'
 - 'Rules':
   - 'Firewall': 'rules/firewall.md'
   - 'S3': 'rules/s3.md'
@@ -23,14 +23,14 @@ nav:
   - 'Writing a Provider': 'development/provider.md'
   - 'Writing a Rule': 'development/rule.md'
 - 'About CScanner':
-  - 'License': 'license.md'
-  - 'Imprint': 'imprint.md'
-  - 'Privacy Policy': 'privacy.md'
-  - 'Contributors': 'contributors.md'
+  - 'License': 'about/license.md'
+  - 'Imprint': 'about/imprint.md'
+  - 'Privacy Policy': 'about/privacy.md'
+  - 'Contributors': 'about/contributors.md'
 site_favicon: img/favicon.png
 extra_css:
   - css/custom.css
 copyright: >
-  <a href="/license/">Copyright &copy; Janos Pasztor and Contributors</a>
-  | <a href="/imprint/">Imprint</a>
-  | <a href="/privacy/">Privacy Policy</a>
+  <a href="/about/license/">Copyright &copy; Janos Pasztor and Contributors</a>
+  | <a href="/about/imprint/">Imprint</a>
+  | <a href="/about/privacy/">Privacy Policy</a>

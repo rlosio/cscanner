@@ -4,7 +4,7 @@ title: Imprint
 
 # Imprint
 
-This website is operated by:
+This project is operated by:
 
 <address>
 Janos Pasztor<br />

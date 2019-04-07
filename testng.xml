@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="All tests" verbose="1" >
+    <test name="Core">
+        <packages>
+            <package name="com.opsbears.cscanner.core" />
+        </packages>
+    </test>
+
+    <test name="CLI">
+        <packages>
+            <package name="com.opsbears.cscanner.cli" />
+        </packages>
+    </test>
+
+    <test name="Exoscale">
+        <packages>
+            <package name="com.opsbears.cscanner.exoscale" />
+        </packages>
+    </test>
+
+    <test name="AWS">
+        <packages>
+            <package name="com.opsbears.cscanner.aws" />
+        </packages>
+    </test>
+</suite>

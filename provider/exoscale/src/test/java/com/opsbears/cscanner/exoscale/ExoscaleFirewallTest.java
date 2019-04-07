@@ -4,19 +4,16 @@ import com.opsbears.cscanner.core.*;
 import com.opsbears.cscanner.firewall.FirewallConnection;
 import com.opsbears.cscanner.firewall.FirewallPlugin;
 import com.opsbears.cscanner.firewall.FirewallPublicServiceProhibitedRule;
-import com.opsbears.cscanner.firewall.FirewallRule;
-import com.opsbears.cscanner.s3.S3Plugin;
-import com.opsbears.cscanner.test.TestConfigurationLoader;
-import com.opsbears.cscanner.test.TestPlugin;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * This test suite tests the Exoscale firewall behavior. It requires a live Exoscale connection.
@@ -45,9 +42,11 @@ public class ExoscaleFirewallTest {
         ));
     }
 
-    @Before
+    @BeforeTest
     public void beforeMethod() {
-        org.junit.Assume.assumeTrue(testClient != null);
+        if (testClient == null) {
+            throw new SkipException("Exoscale credentials not supplied (EXOSCALE_KEY and EXOSCALE_SECRET env variables), skipping tests.");
+        }
     }
 
     @Test

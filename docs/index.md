@@ -13,7 +13,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/janoszen.svg?style=social)](https://twitter.com/janoszen)
 
 This utility is intended to check your cloud configuration for compliance with your companies rules in an automated
-fashion, not unlike AWS config.
+fashion, not unlike AWS Config.
 
 For example, if you want to make sure that your port 22 is never open to the world, across all your cloud providers,
 you could do something like this:
@@ -81,7 +81,7 @@ The next section is the `rules` section, which you can specify your rules in:
 ```
 
 Each rule has two universal parameters: `type` to specify the rule type and `connections` which you can use to
-limit the rule to only certian connections. The default is to use all connections.
+limit the rule to only certain connections. The default is to use all connections.
 
 If a certain cloud provider doesn't support a specific functionality, that cloud provider will be simply skipped for
 the specified rule.
@@ -134,8 +134,8 @@ the `connections` or `rules` key.
 
 Currently the following cloud providers are supported:
 
-- [Amazon Web Services](clouds/aws.md)
-- [Exoscale](clouds/exoscale.md)
+- [Amazon Web Services](providers/aws.md)
+- [Exoscale](providers/exoscale.md)
 
 ## Supported rules
 

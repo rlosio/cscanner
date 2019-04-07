@@ -1,6 +1,6 @@
 package com.opsbears.cscanner.yaml;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

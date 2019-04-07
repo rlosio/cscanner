@@ -1,20 +1,18 @@
 package com.opsbears.cscanner.exoscale;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.SetBucketAclRequest;
 import com.opsbears.cscanner.core.RuleConfiguration;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
-import com.opsbears.cscanner.firewall.FirewallConnection;
-import com.opsbears.cscanner.firewall.FirewallPlugin;
 import com.opsbears.cscanner.s3.S3Plugin;
 import com.opsbears.cscanner.s3.S3PublicReadProhibitedRule;
 import com.opsbears.cscanner.s3.S3Rule;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,7 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 @ParametersAreNonnullByDefault
 public class ExoscaleS3Test {
@@ -42,9 +40,11 @@ public class ExoscaleS3Test {
         }
     }
 
-    @Before
+    @BeforeTest
     public void beforeMethod() {
-        org.junit.Assume.assumeTrue(testClientSupplier != null);
+        if (testClientSupplier == null) {
+            throw new SkipException("Exoscale credentials not supplied (EXOSCALE_KEY and EXOSCALE_SECRET env variables), skipping tests.");
+        }
     }
 
     private ScannerCore createScannerCore(List<RuleConfiguration> rules) {

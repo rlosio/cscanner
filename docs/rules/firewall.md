@@ -35,7 +35,7 @@ This option accepts a list of ports that should be checked.
 This option accepts a regular expression to match against the security group name. If include is specified, only
 the security groups with the specified name will be considered.
 
-Note that each cloud provider implements security groups differently. The [AWS provider](../clouds/aws.md), for example,
+Note that each cloud provider implements security groups differently. The [AWS provider](../providers/aws.md), for example,
 will return an ARN. (To Be Fixed)
 
 ### exclude

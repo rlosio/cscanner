@@ -1,6 +1,6 @@
 package com.opsbears.cscanner.core;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 
 @ParametersAreNonnullByDefault
 public class ConfigurationConverterTest {
