@@ -32,6 +32,23 @@ The project can be built with a simple `mvn package`. However, keep in mind that
 configuration to be available, which will be documented at a later stage. Please open an issue or go on Discord to
 receive some help in setting this up. (Yes, this will be improved later on.)
 
+## Running tests
+
+The tests in this project are written with [TestNG](https://testng.org/). The simplest way to run them is via Maven:
+`mvn test`. However, you may wish to integrate them with your IDE. For this purpose the file `testng.xml` is provided
+in the repository.
+
+If you want to run tests that do a live fire exercise against a cloud account (e.g. Exoscale, AWS) you will have
+to provide credentials for these accounts. This can be done using the following environment variables:
+
+- `EXOSCALE_KEY`
+- `EXOSCALE_SECRET`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+Additionally you can provide the `TEST_RESOURCE_PREFIX` environment variable to create resources with fixed names. This
+is not strictly necessary as the tests will do their best to clean up after themselves, but may be helpful nonetheless. 
+
 ## Sending a pull request
 
 Once you're done, please [send a pull request](https://github.com/janoszen/cscanner/pulls) with your changes.
