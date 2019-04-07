@@ -2,6 +2,7 @@ package com.opsbears.cscanner.exoscale;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.SetBucketAclRequest;
 import com.opsbears.cscanner.core.RuleConfiguration;
@@ -28,11 +29,16 @@ public class ExoscaleS3Test {
     private static String apiKey;
     @Nullable
     private static String apiSecret;
+    private static String resourcePrefix;
     private static ExoscaleS3ClientSupplier testClientSupplier;
 
     static {
         apiKey = System.getenv("EXOSCALE_KEY");
         apiSecret = System.getenv("EXOSCALE_SECRET");
+        resourcePrefix = System.getenv("TEST_RESOURCE_PREFIX");
+        if (resourcePrefix == null || resourcePrefix.equals("")) {
+            resourcePrefix = "test-" + UUID.randomUUID().toString() + "-";
+        }
         if (apiKey == null || apiSecret == null) {
             testClientSupplier = null;
         } else {
@@ -56,73 +62,92 @@ public class ExoscaleS3Test {
     @Test
     public void testCompliantBucket() {
         //Setup
+        String bucketName = resourcePrefix + "compliant-bucket";
         AmazonS3 client = testClientSupplier.get("at-vie-1");
-        client.createBucket("compliant-bucket.cscanner.io");
-        client.setBucketAcl(new SetBucketAclRequest(
-            "compliant-bucket.cscanner.io",
-            CannedAccessControlList.Private
-        ));
-        List<RuleConfiguration> rules = new ArrayList<>();
-        Map<String, Object> options = new HashMap<>();
-        rules.add(new RuleConfiguration(
-            S3PublicReadProhibitedRule.RULE,
-            new ArrayList<>(),
-            options
-        ));
+        client.createBucket(bucketName);
+        try {
+            client.setBucketAcl(new SetBucketAclRequest(
+                bucketName,
+                CannedAccessControlList.Private
+            ));
+            List<RuleConfiguration> rules = new ArrayList<>();
+            Map<String, Object> options = new HashMap<>();
+            rules.add(new RuleConfiguration(
+                S3PublicReadProhibitedRule.RULE,
+                new ArrayList<>(),
+                options
+            ));
 
-        ScannerCore scannerCore = createScannerCore(
-            rules
-        );
+            ScannerCore scannerCore = createScannerCore(
+                rules
+            );
 
-        //Execute
-        List<RuleResult> results = scannerCore.scan();
+            //Execute
+            List<RuleResult> results = scannerCore.scan();
 
-        //Assert
-        List<RuleResult> filteredResults = results
-            .stream()
-            .filter(result -> result.connectionName.equals("exo"))
-            .filter(result -> result.resourceName.equalsIgnoreCase("compliant-bucket.cscanner.io"))
-            .filter(result -> result.resourceType.equalsIgnoreCase(S3Rule.RESOURCE_TYPE))
-            .collect(Collectors.toList());
+            //Assert
+            List<RuleResult> filteredResults = results
+                .stream()
+                .filter(result -> result.connectionName.equals("exo"))
+                .filter(result -> result.resourceName.equalsIgnoreCase(bucketName))
+                .filter(result -> result.resourceType.equalsIgnoreCase(S3Rule.RESOURCE_TYPE))
+                .collect(Collectors.toList());
 
-        assertEquals(1, filteredResults.size());
-        assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+            assertEquals(1, filteredResults.size());
+            assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+        } finally {
+            //Cleanup
+            client.deleteBucket(bucketName);
+        }
     }
 
     private void assertNonCompliantFilePublicAcl(boolean scanContents) {
         //Setup
-        String bucketName = "non-compliant-bucket.cscanner.io";
+        String bucketName = resourcePrefix + "non-compliant-bucket";
         AmazonS3 client = testClientSupplier.get("at-vie-1");
         client.createBucket(bucketName);
-        client.putObject(bucketName, "/test.txt", new ByteArrayInputStream("Hello world!".getBytes()), new ObjectMetadata());
-        client.setObjectAcl(bucketName, "/test.txt", CannedAccessControlList.PublicRead);
-        List<RuleConfiguration> rules = new ArrayList<>();
-        Map<String, Object> options = new HashMap<>();
-        options.put("scanContents", scanContents);
-        rules.add(new RuleConfiguration(
-            S3PublicReadProhibitedRule.RULE,
-            new ArrayList<>(),
-            options
-        ));
+        try {
+            client.putObject(
+                bucketName,
+                "/test.txt",
+                new ByteArrayInputStream("Hello world!".getBytes()),
+                new ObjectMetadata()
+            );
+            client.setObjectAcl(bucketName, "/test.txt", CannedAccessControlList.PublicRead);
+            List<RuleConfiguration> rules = new ArrayList<>();
+            Map<String, Object> options = new HashMap<>();
+            options.put("scanContents", scanContents);
+            rules.add(new RuleConfiguration(
+                S3PublicReadProhibitedRule.RULE,
+                new ArrayList<>(),
+                options
+            ));
 
-        ScannerCore scannerCore = createScannerCore(
-            rules
-        );
+            ScannerCore scannerCore = createScannerCore(
+                rules
+            );
 
-        //Execute
-        List<RuleResult> results = scannerCore.scan();
+            //Execute
+            List<RuleResult> results = scannerCore.scan();
 
-        //Assert
-        List<RuleResult> filteredResults = results
-            .stream()
-            .filter(result -> result.connectionName.equals("exo"))
-            .filter(result -> result.resourceName.equalsIgnoreCase(bucketName))
-            .filter(result -> result.resourceType.equalsIgnoreCase(S3Rule.RESOURCE_TYPE))
-            .collect(Collectors.toList());
+            //Assert
+            List<RuleResult> filteredResults = results
+                .stream()
+                .filter(result -> result.connectionName.equals("exo"))
+                .filter(result -> result.resourceName.equalsIgnoreCase(bucketName))
+                .filter(result -> result.resourceType.equalsIgnoreCase(S3Rule.RESOURCE_TYPE))
+                .collect(Collectors.toList());
 
-        assertEquals(1, filteredResults.size());
-        assertEquals(scanContents?RuleResult.Compliancy.NONCOMPLIANT:RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
-
+            assertEquals(1, filteredResults.size());
+            assertEquals(
+                scanContents ? RuleResult.Compliancy.NONCOMPLIANT : RuleResult.Compliancy.COMPLIANT,
+                filteredResults.get(0).compliancy
+            );
+        } finally {
+            //Cleanup
+            client.deleteObject(new DeleteObjectRequest(bucketName, "/test.txt"));
+            client.deleteBucket(bucketName);
+        }
     }
 
     @Test

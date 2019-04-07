@@ -43,6 +43,16 @@ public class ExoscaleTestClient {
         }
     }
 
+    public void ensureSecurityGroupAbsent(String name) {
+        try {
+            ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest("deleteSecurityGroup");
+            apacheCloudStackRequest.addParameter("name", name);
+            String response = apacheCloudStackClient.executeRequest(apacheCloudStackRequest);
+        } catch (ApacheCloudStackClientRequestRuntimeException e) {
+            throw e;
+        }
+    }
+
     public void ensureRuleExists(
         String securityGroupName,
         String protocol,

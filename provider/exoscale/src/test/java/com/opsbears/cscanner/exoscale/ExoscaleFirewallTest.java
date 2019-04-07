@@ -24,11 +24,16 @@ public class ExoscaleFirewallTest {
     private static String apiKey;
     @Nullable
     private static String apiSecret;
+    private static String resourcePrefix;
     private static ExoscaleTestClient testClient;
 
     static {
         apiKey = System.getenv("EXOSCALE_KEY");
         apiSecret = System.getenv("EXOSCALE_SECRET");
+        resourcePrefix = System.getenv("TEST_RESOURCE_PREFIX");
+        if (resourcePrefix == null || resourcePrefix.equals("")) {
+            resourcePrefix = "test-" + UUID.randomUUID().toString() + "-";
+        }
         if (apiKey == null || apiSecret == null) {
             testClient = null;
         } else {
@@ -52,99 +57,118 @@ public class ExoscaleFirewallTest {
     @Test
     public void testCompliantSecurityGroup() {
         //Setup
-        testClient.ensureSecurityGroupExists("compliant");
-        testClient.ensureRuleExists("compliant", "icmpv6", Arrays.asList("::/0"), null, null, 128, 0);
-        List<RuleConfiguration> rules = new ArrayList<>();
-        Map<String, Object> options = new HashMap<>();
-        options.put("protocol", "tcp");
-        options.put("ports", Arrays.asList(22));
-        rules.add(new RuleConfiguration(
-            FirewallPublicServiceProhibitedRule.RULE,
-            new ArrayList<>(),
-            options
-        ));
-        ScannerCore scannerCore = createScannerCore(
-            rules
-        );
+        String sgName = resourcePrefix + "compliant";
+        testClient.ensureSecurityGroupExists(sgName);
+        try {
+            testClient.ensureRuleExists(sgName, "icmpv6", Arrays.asList("::/0"), null, null, 128, 0);
+            List<RuleConfiguration> rules = new ArrayList<>();
+            Map<String, Object> options = new HashMap<>();
+            options.put("protocol", "tcp");
+            options.put("ports", Arrays.asList(22));
+            rules.add(new RuleConfiguration(
+                FirewallPublicServiceProhibitedRule.RULE,
+                new ArrayList<>(),
+                options
+            ));
+            ScannerCore scannerCore = createScannerCore(
+                rules
+            );
 
-        //Execute
-        List<RuleResult> results = scannerCore.scan();
+            //Execute
+            List<RuleResult> results = scannerCore.scan();
 
-        //Assert
-        List<RuleResult> filteredResults = results
-            .stream()
-            .filter(result -> result.connectionName.equals("exo"))
-            .filter(result -> result.resourceName.equalsIgnoreCase("compliant"))
-            .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
-            .collect(Collectors.toList());
+            //Assert
+            List<RuleResult> filteredResults = results
+                .stream()
+                .filter(result -> result.connectionName.equals("exo"))
+                .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
+                .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
+                .collect(Collectors.toList());
 
-        assertEquals(1, filteredResults.size());
-        assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+            assertEquals(1, filteredResults.size());
+            assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+
+        } finally {
+            //Cleanup
+            testClient.ensureSecurityGroupAbsent(sgName);
+        }
     }
 
     @Test
     public void testNonCompliantSecurityGroup() {
         //Setup
-        testClient.ensureSecurityGroupExists("noncompliant");
-        testClient.ensureRuleExists("noncompliant", "tcp", Arrays.asList("0.0.0.0/0"), 22, 22, null, null);
-        List<RuleConfiguration> rules = new ArrayList<>();
-        Map<String, Object> options = new HashMap<>();
-        options.put("protocol", "tcp");
-        options.put("ports", Arrays.asList(22));
-        rules.add(new RuleConfiguration(
-            FirewallPublicServiceProhibitedRule.RULE,
-            new ArrayList<>(),
-            options
-        ));
-        ScannerCore scannerCore = createScannerCore(
-            rules
-        );
+        String sgName = resourcePrefix + "noncompliant";
+        testClient.ensureSecurityGroupExists(sgName);
+        try {
+            testClient.ensureRuleExists(sgName, "tcp", Arrays.asList("0.0.0.0/0"), 22, 22, null, null);
+            List<RuleConfiguration> rules = new ArrayList<>();
+            Map<String, Object> options = new HashMap<>();
+            options.put("protocol", "tcp");
+            options.put("ports", Arrays.asList(22));
+            rules.add(new RuleConfiguration(
+                FirewallPublicServiceProhibitedRule.RULE,
+                new ArrayList<>(),
+                options
+            ));
+            ScannerCore scannerCore = createScannerCore(
+                rules
+            );
 
-        //Execute
-        List<RuleResult> results = scannerCore.scan();
+            //Execute
+            List<RuleResult> results = scannerCore.scan();
 
-        //Assert
-        List<RuleResult> filteredResults = results
-            .stream()
-            .filter(result -> result.connectionName.equals("exo"))
-            .filter(result -> result.resourceName.equalsIgnoreCase("noncompliant"))
-            .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
-            .collect(Collectors.toList());
+            //Assert
+            List<RuleResult> filteredResults = results
+                .stream()
+                .filter(result -> result.connectionName.equals("exo"))
+                .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
+                .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
+                .collect(Collectors.toList());
 
-        assertEquals(1, filteredResults.size());
-        assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+            assertEquals(1, filteredResults.size());
+            assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+        } finally {
+            //Cleanup
+            testClient.ensureSecurityGroupAbsent(sgName);
+        }
     }
 
     @Test
     public void testProtocolAll() {
         //Setup
-        testClient.ensureSecurityGroupExists("protocol-all");
-        testClient.ensureRuleExists("protocol-all", "all", Arrays.asList("0.0.0.0/0"), null, null, null, null);
-        List<RuleConfiguration> rules = new ArrayList<>();
-        Map<String, Object> options = new HashMap<>();
-        options.put("protocol", "tcp");
-        options.put("ports", Arrays.asList(22));
-        rules.add(new RuleConfiguration(
-            FirewallPublicServiceProhibitedRule.RULE,
-            new ArrayList<>(),
-            options
-        ));
-        ScannerCore scannerCore = createScannerCore(
-            rules
-        );
+        String sgName = resourcePrefix + "protocol-all";
+        testClient.ensureSecurityGroupExists(sgName);
+        try {
+            testClient.ensureRuleExists(sgName, "all", Arrays.asList("0.0.0.0/0"), null, null, null, null);
+            List<RuleConfiguration> rules = new ArrayList<>();
+            Map<String, Object> options = new HashMap<>();
+            options.put("protocol", "tcp");
+            options.put("ports", Arrays.asList(22));
+            rules.add(new RuleConfiguration(
+                FirewallPublicServiceProhibitedRule.RULE,
+                new ArrayList<>(),
+                options
+            ));
+            ScannerCore scannerCore = createScannerCore(
+                rules
+            );
 
-        //Execute
-        List<RuleResult> results = scannerCore.scan();
+            //Execute
+            List<RuleResult> results = scannerCore.scan();
 
-        //Assert
-        List<RuleResult> filteredResults = results
-            .stream()
-            .filter(result -> result.connectionName.equals("exo"))
-            .filter(result -> result.resourceName.equalsIgnoreCase("protocol-all"))
-            .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
-            .collect(Collectors.toList());
+            //Assert
+            List<RuleResult> filteredResults = results
+                .stream()
+                .filter(result -> result.connectionName.equals("exo"))
+                .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
+                .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
+                .collect(Collectors.toList());
 
-        assertEquals(1, filteredResults.size());
-        assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+            assertEquals(1, filteredResults.size());
+            assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+        } finally {
+            //Cleanup
+            testClient.ensureSecurityGroupAbsent(sgName);
+        }
     }
 }
