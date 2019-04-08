@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.11.344</version>
+            <version>1.11.525</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -46,6 +46,12 @@
             <groupId>com.opsbears.cscanner</groupId>
             <artifactId>aws</artifactId>
             <version>master-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.26</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
