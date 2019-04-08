@@ -2,6 +2,7 @@ package com.opsbears.cscanner.aws;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
@@ -47,7 +48,9 @@ public class AWSTestFirewallClient implements TestFirewallClient {
             public void refresh() {
 
             }
-        }).build();
+        })
+            .withRegion(Regions.DEFAULT_REGION)
+            .build();
     }
 
     @Override

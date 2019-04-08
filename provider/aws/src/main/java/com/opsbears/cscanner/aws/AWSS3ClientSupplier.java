@@ -1,7 +1,6 @@
 package com.opsbears.cscanner.aws;
 
-import com.amazonaws.auth.*;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.opsbears.cscanner.s3.S3Factory;
@@ -24,6 +23,8 @@ public class AWSS3ClientSupplier implements S3Factory {
 
         if (region != null) {
             builder.withRegion(region);
+        } else {
+            builder.withRegion(Regions.DEFAULT_REGION);
         }
 
         builder.withForceGlobalBucketAccessEnabled(true);
