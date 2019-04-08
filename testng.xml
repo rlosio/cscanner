@@ -12,15 +12,15 @@
         </packages>
     </test>
 
-    <test name="Exoscale">
+    <test name="Firewall">
         <packages>
-            <package name="com.opsbears.cscanner.exoscale" />
+            <package name="com.opsbears.cscanner.firewall" />
         </packages>
     </test>
 
-    <test name="AWS">
+    <test name="S3">
         <packages>
-            <package name="com.opsbears.cscanner.aws" />
+            <package name="com.opsbears.cscanner.s3" />
         </packages>
     </test>
 </suite>

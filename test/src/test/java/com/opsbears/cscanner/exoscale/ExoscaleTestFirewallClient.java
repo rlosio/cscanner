@@ -5,22 +5,22 @@ import br.com.autonomiccs.apacheCloudStack.client.ApacheCloudStackRequest;
 import br.com.autonomiccs.apacheCloudStack.client.beans.ApacheCloudStackUser;
 import br.com.autonomiccs.apacheCloudStack.exceptions.ApacheCloudStackClientRequestRuntimeException;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.opsbears.cscanner.firewall.Protocols;
+import com.opsbears.cscanner.firewall.TestFirewallClient;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class ExoscaleTestClient {
+public class ExoscaleTestFirewallClient implements TestFirewallClient {
     private final String apiKey;
     private final String apiSecret;
     private final ApacheCloudStackUser apacheCloudStackUser;
     private final ApacheCloudStackClient apacheCloudStackClient;
 
-
-    public ExoscaleTestClient(
+    public ExoscaleTestFirewallClient(
         String apiKey,
         String apiSecret
     ) {
@@ -31,6 +31,7 @@ public class ExoscaleTestClient {
         apacheCloudStackClient = new ApacheCloudStackClient("https://api.exoscale.ch/compute", apacheCloudStackUser);
     }
 
+    @Override
     public void ensureSecurityGroupExists(String name) {
         try {
             ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest("createSecurityGroup");
@@ -43,6 +44,7 @@ public class ExoscaleTestClient {
         }
     }
 
+    @Override
     public void ensureSecurityGroupAbsent(String name) {
         try {
             ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest("deleteSecurityGroup");
@@ -53,9 +55,11 @@ public class ExoscaleTestClient {
         }
     }
 
+    @Override
     public void ensureRuleExists(
         String securityGroupName,
-        String protocol,
+        @Nullable
+        Integer protocol,
         List<String> cidrList,
         @Nullable Integer startPort,
         @Nullable Integer endPort,
@@ -66,7 +70,11 @@ public class ExoscaleTestClient {
             ApacheCloudStackRequest apacheCloudStackRequest = new ApacheCloudStackRequest(
                 "authorizeSecurityGroupIngress");
             apacheCloudStackRequest.addParameter("securitygroupname", securityGroupName);
-            apacheCloudStackRequest.addParameter("protocol", protocol);
+            if (protocol == null) {
+                apacheCloudStackRequest.addParameter("protocol", "all");
+            } else {
+                apacheCloudStackRequest.addParameter("protocol", Protocols.getInstance().getProtocolNameByNumber(protocol).replaceAll("ipv6-icmp", "icmpv6"));
+            }
             apacheCloudStackRequest.addParameter("cidrList", String.join(",", cidrList));
             if (startPort != null) {
                 apacheCloudStackRequest.addParameter("startPort", startPort);

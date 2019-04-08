@@ -49,6 +49,14 @@ to provide credentials for these accounts. This can be done using the following 
 Additionally you can provide the `TEST_RESOURCE_PREFIX` environment variable to create resources with fixed names. This
 is not strictly necessary as the tests will do their best to clean up after themselves, but may be helpful nonetheless. 
 
+## Writing tests
+
+If you want to write unit tests, go ahead, write them as you usually do. However, integration tests are a bit more
+complicated. Due to how Maven works all integration tests are located in the `test` module. The test suites generally
+implement a test for a certain rule and data providers supply the different implementations for testing.
+This will make it easy to add a new provider, but may make it a bit unusual at first. It is recommended that you take a 
+look at the current implementations for a good template.
+
 ## Sending a pull request
 
 Once you're done, please [send a pull request](https://github.com/janoszen/cscanner/pulls) with your changes.

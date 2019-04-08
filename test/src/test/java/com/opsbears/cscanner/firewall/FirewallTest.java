@@ -1,66 +1,76 @@
-package com.opsbears.cscanner.exoscale;
+package com.opsbears.cscanner.firewall;
 
-import com.opsbears.cscanner.core.*;
-import com.opsbears.cscanner.firewall.FirewallConnection;
-import com.opsbears.cscanner.firewall.FirewallPlugin;
-import com.opsbears.cscanner.firewall.FirewallPublicServiceProhibitedRule;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeTest;
+import com.opsbears.cscanner.core.RuleConfiguration;
+import com.opsbears.cscanner.core.RuleResult;
+import com.opsbears.cscanner.core.ScannerCore;
+import com.opsbears.cscanner.core.ScannerCoreFactory;
+import com.opsbears.cscanner.exoscale.ExoscaleTestFirewallClientFactory;
+import com.opsbears.cscanner.s3.S3TestClientSupplier;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.testng.Assert.assertEquals;
 
 /**
  * This test suite tests the Exoscale firewall behavior. It requires a live Exoscale connection.
  */
 @ParametersAreNonnullByDefault
-public class ExoscaleFirewallTest {
-    @Nullable
-    private static String apiKey;
-    @Nullable
-    private static String apiSecret;
-    private static String resourcePrefix;
-    private static ExoscaleTestClient testClient;
+public class FirewallTest {
+    @SuppressWarnings("unchecked")
+    private static List<Class<TestFirewallClientFactory>> factories = Arrays.<Class<S3TestClientSupplier>>asList(
+        new Class[]{ExoscaleTestFirewallClientFactory.class}
+    );
 
-    static {
-        apiKey = System.getenv("EXOSCALE_KEY");
-        apiSecret = System.getenv("EXOSCALE_SECRET");
-        resourcePrefix = System.getenv("TEST_RESOURCE_PREFIX");
-        if (resourcePrefix == null || resourcePrefix.equals("")) {
+
+    @DataProvider(name = "dataProvider")
+    public static Object[][] dataProvider() {
+        String resourcePrefix;
+        if (System.getenv("TEST_RESOURCE_PREFIX") == null || System.getenv("TEST_RESOURCE_PREFIX").equals("")) {
             resourcePrefix = "test-" + UUID.randomUUID().toString() + "-";
-        }
-        if (apiKey == null || apiSecret == null) {
-            testClient = null;
         } else {
-            testClient = new ExoscaleTestClient(apiKey, apiSecret);
+            resourcePrefix = System.getenv("TEST_RESOURCE_PREFIX");
         }
+
+        List<Object[]> params = factories.stream()
+            .map(
+                factory -> {
+                    try {
+                        return factory.newInstance();
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        return null;
+                    }
+                }
+            )
+            .filter(Objects::nonNull)
+            .filter(
+                factory -> factory.get() != null
+            )
+            .map(
+                factory -> new Object[]{
+                    resourcePrefix,
+                    factory.get(),
+                    factory.getScannerCore()
+                }
+            ).collect(Collectors.toList());
+
+        return params.toArray(new Object[][]{});
     }
 
-    private ScannerCore createScannerCore(List<RuleConfiguration> rules) {
-        return ScannerCoreFactory.create(apiKey, apiSecret, rules, Arrays.asList(
-            new FirewallPlugin()
-        ));
-    }
 
-    @BeforeTest
-    public void beforeMethod() {
-        if (testClient == null) {
-            throw new SkipException("Exoscale credentials not supplied (EXOSCALE_KEY and EXOSCALE_SECRET env variables), skipping tests.");
-        }
-    }
-
-    @Test
-    public void testCompliantSecurityGroup() {
+    @Test(dataProvider = "dataProvider")
+    public void testCompliantSecurityGroup(
+        String resourcePrefix,
+        TestFirewallClient testClient,
+        ScannerCoreFactory scannerCoreFactory
+    ) {
         //Setup
         String sgName = resourcePrefix + "compliant";
         testClient.ensureSecurityGroupExists(sgName);
         try {
-            testClient.ensureRuleExists(sgName, "icmpv6", Arrays.asList("::/0"), null, null, 128, 0);
+            testClient.ensureRuleExists(sgName, 58, Arrays.asList("::/0"), null, null, 128, 0);
             List<RuleConfiguration> rules = new ArrayList<>();
             Map<String, Object> options = new HashMap<>();
             options.put("protocol", "tcp");
@@ -70,7 +80,7 @@ public class ExoscaleFirewallTest {
                 new ArrayList<>(),
                 options
             ));
-            ScannerCore scannerCore = createScannerCore(
+            ScannerCore scannerCore = scannerCoreFactory.create(
                 rules
             );
 
@@ -80,13 +90,12 @@ public class ExoscaleFirewallTest {
             //Assert
             List<RuleResult> filteredResults = results
                 .stream()
-                .filter(result -> result.connectionName.equals("exo"))
                 .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
                 .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
                 .collect(Collectors.toList());
 
-            assertEquals(1, filteredResults.size());
-            assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+            Assert.assertEquals(1, filteredResults.size());
+            Assert.assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
 
         } finally {
             //Cleanup
@@ -94,13 +103,17 @@ public class ExoscaleFirewallTest {
         }
     }
 
-    @Test
-    public void testNonCompliantSecurityGroup() {
+    @Test(dataProvider = "dataProvider")
+    public void testNonCompliantSecurityGroup(
+        String resourcePrefix,
+        TestFirewallClient testClient,
+        ScannerCoreFactory scannerCoreFactory
+    ) {
         //Setup
         String sgName = resourcePrefix + "noncompliant";
         testClient.ensureSecurityGroupExists(sgName);
         try {
-            testClient.ensureRuleExists(sgName, "tcp", Arrays.asList("0.0.0.0/0"), 22, 22, null, null);
+            testClient.ensureRuleExists(sgName, 6, Arrays.asList("0.0.0.0/0"), 22, 22, null, null);
             List<RuleConfiguration> rules = new ArrayList<>();
             Map<String, Object> options = new HashMap<>();
             options.put("protocol", "tcp");
@@ -110,7 +123,7 @@ public class ExoscaleFirewallTest {
                 new ArrayList<>(),
                 options
             ));
-            ScannerCore scannerCore = createScannerCore(
+            ScannerCore scannerCore = scannerCoreFactory.create(
                 rules
             );
 
@@ -120,26 +133,29 @@ public class ExoscaleFirewallTest {
             //Assert
             List<RuleResult> filteredResults = results
                 .stream()
-                .filter(result -> result.connectionName.equals("exo"))
                 .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
                 .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
                 .collect(Collectors.toList());
 
-            assertEquals(1, filteredResults.size());
-            assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+            Assert.assertEquals(1, filteredResults.size());
+            Assert.assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
         } finally {
             //Cleanup
             testClient.ensureSecurityGroupAbsent(sgName);
         }
     }
 
-    @Test
-    public void testProtocolAll() {
+    @Test(dataProvider = "dataProvider")
+    public void testProtocolAll(
+        String resourcePrefix,
+        TestFirewallClient testClient,
+        ScannerCoreFactory scannerCoreFactory
+    ) {
         //Setup
         String sgName = resourcePrefix + "protocol-all";
         testClient.ensureSecurityGroupExists(sgName);
         try {
-            testClient.ensureRuleExists(sgName, "all", Arrays.asList("0.0.0.0/0"), null, null, null, null);
+            testClient.ensureRuleExists(sgName, null, Arrays.asList("0.0.0.0/0"), null, null, null, null);
             List<RuleConfiguration> rules = new ArrayList<>();
             Map<String, Object> options = new HashMap<>();
             options.put("protocol", "tcp");
@@ -149,7 +165,7 @@ public class ExoscaleFirewallTest {
                 new ArrayList<>(),
                 options
             ));
-            ScannerCore scannerCore = createScannerCore(
+            ScannerCore scannerCore = scannerCoreFactory.create(
                 rules
             );
 
@@ -159,13 +175,12 @@ public class ExoscaleFirewallTest {
             //Assert
             List<RuleResult> filteredResults = results
                 .stream()
-                .filter(result -> result.connectionName.equals("exo"))
                 .filter(result -> result.resourceName.equalsIgnoreCase(sgName))
                 .filter(result -> result.resourceType.equalsIgnoreCase(FirewallConnection.RESOURCE_TYPE))
                 .collect(Collectors.toList());
 
-            assertEquals(1, filteredResults.size());
-            assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
+            Assert.assertEquals(1, filteredResults.size());
+            Assert.assertEquals(RuleResult.Compliancy.NONCOMPLIANT, filteredResults.get(0).compliancy);
         } finally {
             //Cleanup
             testClient.ensureSecurityGroupAbsent(sgName);

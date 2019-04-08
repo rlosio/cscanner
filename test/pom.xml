@@ -18,5 +18,29 @@
             <artifactId>core</artifactId>
             <version>master-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.11.344</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opsbears.cscanner</groupId>
+            <artifactId>s3</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opsbears.cscanner</groupId>
+            <artifactId>firewall</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.opsbears.cscanner</groupId>
+            <artifactId>exoscale</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
