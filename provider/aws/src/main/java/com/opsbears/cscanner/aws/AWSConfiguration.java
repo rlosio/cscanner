@@ -2,6 +2,7 @@ package com.opsbears.cscanner.aws;
 
 import com.amazonaws.auth.*;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenService;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
@@ -10,7 +11,6 @@ import com.opsbears.cscanner.core.CScannerParameter;
 import com.opsbears.cscanner.core.NullSupplier;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 public class AWSConfiguration {
     @Nullable
@@ -120,6 +120,7 @@ public class AWSConfiguration {
     public String getAccountId() {
         AWSSecurityTokenServiceClientBuilder builder = AWSSecurityTokenServiceClientBuilder.standard();
         builder.withCredentials(getCredentialsProvider());
+        builder.withRegion(Regions.DEFAULT_REGION);
         AWSSecurityTokenService client = builder.build();
 
         GetCallerIdentityResult callerIdentity = client.getCallerIdentity(new GetCallerIdentityRequest());

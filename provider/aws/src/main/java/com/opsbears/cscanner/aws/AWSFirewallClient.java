@@ -150,10 +150,10 @@ public class AWSFirewallClient implements FirewallClient {
                     );
                     nextToken = describeSecurityGroups.getNextToken();
                 } while (nextToken != null);
-                logger.warn("Region fetch complete.");
+                logger.warn("Region fetch complete for " + region.getName() + ".");
             } catch (AmazonClientException clientException) {
                 //Region must be disabled
-                logger.warn("Failed to fetch region " + region + " despite good credentials, region probably disabled or missing permissions.");
+                logger.warn("Failed to fetch region " + region.getName() + " despite good credentials, region probably disabled or missing permissions.");
             }
         }
 
