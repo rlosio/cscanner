@@ -42,5 +42,11 @@
             <version>master-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.opsbears.cscanner</groupId>
+            <artifactId>aws</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,6 @@
 package com.opsbears.cscanner.firewall;
 
+import com.opsbears.cscanner.aws.AWSTestFirewallClientFactory;
 import com.opsbears.cscanner.core.RuleConfiguration;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
@@ -21,7 +22,10 @@ import java.util.stream.Collectors;
 public class FirewallTest {
     @SuppressWarnings("unchecked")
     private static List<Class<TestFirewallClientFactory>> factories = Arrays.<Class<S3TestClientSupplier>>asList(
-        new Class[]{ExoscaleTestFirewallClientFactory.class}
+        new Class[]{
+            ExoscaleTestFirewallClientFactory.class,
+            AWSTestFirewallClientFactory.class
+        }
     );
 
 

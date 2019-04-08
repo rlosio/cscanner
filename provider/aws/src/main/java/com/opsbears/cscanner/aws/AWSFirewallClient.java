@@ -46,7 +46,7 @@ public class AWSFirewallClient implements FirewallClient {
                     permission.getToPort(),
                     null,
                     null,
-                    FirewallRule.Direction.INGRESS,
+                    direction,
                     FirewallRule.Rule.ALLOW
                 ));
             }
@@ -60,7 +60,7 @@ public class AWSFirewallClient implements FirewallClient {
                     permission.getToPort(),
                     null,
                     null,
-                    FirewallRule.Direction.INGRESS,
+                    direction,
                     FirewallRule.Rule.ALLOW
                 ));
             }
@@ -74,11 +74,23 @@ public class AWSFirewallClient implements FirewallClient {
                     permission.getToPort(),
                     null,
                     null,
-                    FirewallRule.Direction.INGRESS,
+                    direction,
                     FirewallRule.Rule.ALLOW
                 ));
             }
         }
+        firewallRules.add(new FirewallRule(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            direction,
+            FirewallRule.Rule.DENY
+        ));
         logger.debug("Conversion complete, " + firewallRules.size() + " rules returned.");
         return firewallRules;
     }

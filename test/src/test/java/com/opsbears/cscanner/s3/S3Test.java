@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.SetBucketAclRequest;
+import com.opsbears.cscanner.aws.AWSS3TestClientFactory;
 import com.opsbears.cscanner.core.RuleConfiguration;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
@@ -24,14 +25,14 @@ import static org.testng.Assert.assertEquals;
 public class S3Test {
     @SuppressWarnings("unchecked")
     private static List<Class<S3TestClientSupplier>> factories = Arrays.<Class<S3TestClientSupplier>>asList(
-        new Class[]{ExoscaleS3TestClientFactory.class}
+        new Class[]{ExoscaleS3TestClientFactory.class, AWSS3TestClientFactory.class}
     );
 
     @DataProvider(name = "dataProvider")
     public static Object[][] dataProvider() {
         String resourcePrefix;
         if (System.getenv("TEST_RESOURCE_PREFIX") == null || System.getenv("TEST_RESOURCE_PREFIX").equals("")) {
-            resourcePrefix = "test-" + UUID.randomUUID().toString() + "-";
+            resourcePrefix = "test-" + UUID.randomUUID().toString();
         } else {
             resourcePrefix = System.getenv("TEST_RESOURCE_PREFIX");
         }
@@ -94,7 +95,6 @@ public class S3Test {
             //Assert
             List<RuleResult> filteredResults = results
                 .stream()
-                .filter(result -> result.connectionName.equals("exo"))
                 .filter(result -> result.resourceName.equalsIgnoreCase(bucketName))
                 .filter(result -> result.resourceType.equalsIgnoreCase(S3Rule.RESOURCE_TYPE))
                 .collect(Collectors.toList());
