@@ -42,6 +42,12 @@ jobs:
         root: /tmp/project
         paths:
         - "*/target/*.jar"
+  deploy-docs:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+      - checkout
+      - run: mkdocs gh-deploy
   deploy-branch:
     <<: *defaults
     steps:
@@ -68,8 +74,7 @@ jobs:
       - run: rm /release/cli-${CIRCLE_TAG}.jar
       - run: ghr -u janoszen -r cscanner -recreate ${CIRCLE_TAG} /release
       - run: rm -rf /tmp/project
-      - checkout
-      - run: mkdocs gh-deploy
+
 workflows:
   version: 2
   build-and-deploy:
@@ -97,3 +102,10 @@ workflows:
             ignore: /.*/
           tags:
             ignore: /.*-SNAPSHOT/
+    - deploy-docs:
+        context: cscanner
+        filters:
+          branches:
+            only: master
+          tags:
+            ignore: /.*/
