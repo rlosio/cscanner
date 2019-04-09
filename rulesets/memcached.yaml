@@ -1,0 +1,5 @@
+---
+- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+  protocol: tcp
+  ports:
+  - 11211

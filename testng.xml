@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="All tests" verbose="1" >
+    <test name="Core">
+        <packages>
+            <package name="com.opsbears.cscanner.core" />
+        </packages>
+    </test>
+
+    <test name="CLI">
+        <packages>
+            <package name="com.opsbears.cscanner.cli" />
+        </packages>
+    </test>
+
+    <test name="Firewall">
+        <packages>
+            <package name="com.opsbears.cscanner.firewall" />
+        </packages>
+    </test>
+
+    <test name="S3">
+        <packages>
+            <package name="com.opsbears.cscanner.s3" />
+        </packages>
+    </test>
+</suite>

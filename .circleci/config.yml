@@ -1,0 +1,112 @@
+---
+version: 2
+defaults: &defaults
+  working_directory: /tmp/project
+  parallelism: 1
+  docker:
+    - image: janoszen/java-build
+jobs:
+  build-branch:
+    <<: *defaults
+    steps:
+    - checkout
+    - run:
+        name: Set Maven version
+        command: mvn versions:set -DnewVersion=${CIRCLE_BRANCH}-SNAPSHOT
+    - restore_cache:
+        key: cscanner-{{ checksum "pom.xml" }}
+    - run: mvn package
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: cscanner-{{ checksum "pom.xml" }}
+    - persist_to_workspace:
+        root: /tmp/project
+        paths:
+        - "*/target/*.jar"
+  build-tag:
+    <<: *defaults
+    steps:
+    - checkout
+    - run:
+        name: Set Maven version
+        command: mvn versions:set -DnewVersion=${CIRCLE_TAG}
+    - restore_cache:
+        key: cscanner-{{ checksum "pom.xml" }}
+    - run: mvn package
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: cscanner-{{ checksum "pom.xml" }}
+    - persist_to_workspace:
+        root: /tmp/project
+        paths:
+        - "*/target/*.jar"
+  deploy-docs:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+      - checkout
+      - run: pip3 install -r requirements.txt
+      - run: mkdocs gh-deploy
+  deploy-branch:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/project
+      - run: mkdir -p /release
+      - run: cp /tmp/project/cli/target/*.jar /release
+      - run: mv /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-jar-with-dependencies.jar /release/cscanner.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT-sources.jar
+      - run: rm /release/cli-${CIRCLE_BRANCH}-SNAPSHOT.jar
+      - run: ghr -u janoszen -r cscanner -recreate -prerelease ${CIRCLE_BRANCH}-SNAPSHOT /release
+  deploy-tag:
+    <<: *defaults
+    steps:
+      - add_ssh_keys:
+      - attach_workspace:
+          at: /tmp/project
+      - run: mkdir -p /release
+      - run: cp cli/target/*.jar /release
+      - run: mv /release/cli-${CIRCLE_TAG}-jar-with-dependencies.jar /release/cscanner.jar
+      - run: rm /release/cli-${CIRCLE_TAG}-javadoc.jar
+      - run: rm /release/cli-${CIRCLE_TAG}-sources.jar
+      - run: rm /release/cli-${CIRCLE_TAG}.jar
+      - run: ghr -u janoszen -r cscanner -recreate ${CIRCLE_TAG} /release
+      - run: rm -rf /tmp/project
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+    - build-branch:
+        context: cscanner
+        filters:
+          branches:
+            ignore: gh-pages
+          tags:
+            ignore: /.*/
+    - build-tag:
+        context: cscanner
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            ignore: /.*-SNAPSHOT/
+    - deploy-tag:
+        context: cscanner
+        requires:
+          - build-tag
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            ignore: /.*-SNAPSHOT/
+    - deploy-docs:
+        context: cscanner
+        filters:
+          branches:
+            only: master
+          tags:
+            ignore: /.*/

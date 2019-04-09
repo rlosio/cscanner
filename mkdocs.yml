@@ -1,12 +1,43 @@
----
-site_name: Janos' Cloud Scanner
-repo_url: https://github.com/janoszen/cscanner/
-theme: readthedocs
+site_name: "CScanner: A Cloud Security Scanner"
+site_url: "https://cscanner.io/"
+repo_url: "https://github.com/janoszen/cscanner/"
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: True
+      separator: "-"
+theme:
+  name: readthedocs
+  custom_dir: ./docs/.theme/
+  include_sidebar: false
+  static_templates:
+    - .circleci/config.yml
+plugins:
+  - search
+  - macros
 nav:
-  - "Home:": 'index.md'
-  - "Cloud providers":
-      - "Amazon Web Services": "clouds/aws.md"
-      - "Exoscale": "clouds/exoscale.md"
-  - "Rules":
-      - "Firewall": "rules/firewall.md"
-      - "S3": "rules/s3.md"
+- 'Home': 'index.md'
+- 'Downloads': 'downloads.md'
+- 'Cloud providers':
+  - 'Amazon Web Services': 'providers/aws.md'
+  - 'DigitalOcean': 'providers/digitalocean.md'
+  - 'Exoscale': 'providers/exoscale.md'
+- 'Rules':
+  - 'Firewall': 'rules/firewall.md'
+  - 'S3': 'rules/s3.md'
+- 'Development':
+  - 'Contributing to CScanner': 'development/index.md'
+  - 'Writing a Provider': 'development/provider.md'
+  - 'Writing a Rule': 'development/rule.md'
+- 'About CScanner':
+  - 'License': 'about/license.md'
+  - 'Imprint': 'about/imprint.md'
+  - 'Privacy Policy': 'about/privacy.md'
+  - 'Contributors': 'about/contributors.md'
+site_favicon: img/favicon.png
+extra_css:
+  - css/custom.css
+copyright: >
+  <a href="/about/license/">Copyright &copy; Janos Pasztor and Contributors</a>
+  | <a href="/about/imprint/">Imprint</a>
+  | <a href="/about/privacy/">Privacy Policy</a>

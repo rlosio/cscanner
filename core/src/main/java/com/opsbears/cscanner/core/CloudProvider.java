@@ -16,6 +16,6 @@ public interface CloudProvider<CONFIGURATIONTYPE, CONNECTIONTYPE extends CloudPr
 
     CONNECTIONTYPE getConnection(
         String name,
-        Map<String, Object> configuration
+        CONFIGURATIONTYPE configuration
     );
 }

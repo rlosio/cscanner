@@ -1,0 +1,9 @@
+---
+- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+  protocol: tcp
+  ports:
+  - 3389
+- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+  protocol: udp
+  ports:
+  - 3389

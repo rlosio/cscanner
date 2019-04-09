@@ -1,0 +1,7 @@
+---
+- type: FIREWALL_PUBLIC_SERVICE_PROHIBITED
+  protocol: tcp
+  ports:
+  - 27017
+  - 27018
+  - 27019

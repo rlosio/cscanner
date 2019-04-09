@@ -1,0 +1,6 @@
+---
+- include: ftp.yaml
+- include: ssh.yaml
+- include: telnet.yaml
+- include: rdp.yaml
+- include: winrm.yaml
