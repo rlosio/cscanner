@@ -10,7 +10,9 @@ import com.opsbears.cscanner.core.RuleConfiguration;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
 import com.opsbears.cscanner.core.ScannerCoreFactory;
+import com.opsbears.cscanner.digitalocean.DigitalOceanS3TestClientFactory;
 import com.opsbears.cscanner.exoscale.ExoscaleS3TestClientFactory;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -25,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 public class S3Test {
     @SuppressWarnings("unchecked")
     private static List<Class<S3TestClientSupplier>> factories = Arrays.<Class<S3TestClientSupplier>>asList(
-        new Class[]{ExoscaleS3TestClientFactory.class, AWSS3TestClientFactory.class}
+        new Class[]{ExoscaleS3TestClientFactory.class, AWSS3TestClientFactory.class, DigitalOceanS3TestClientFactory.class}
     );
 
     @DataProvider(name = "dataProvider")
@@ -101,6 +103,9 @@ public class S3Test {
 
             assertEquals(1, filteredResults.size());
             assertEquals(RuleResult.Compliancy.COMPLIANT, filteredResults.get(0).compliancy);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(this.getClass()).warn(e.getMessage(), e);
+            throw e;
         } finally {
             //Cleanup
             client.deleteBucket(bucketName);
@@ -121,14 +126,18 @@ public class S3Test {
         AmazonS3 client = testClientSupplier.get(testClientSupplier.getDefaultZone());
         client.createBucket(bucketName);
         try {
+            client.setBucketAcl(bucketName, bucketAcl);
+            byte[] data = "Hello world!".getBytes();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(data.length);
+            metadata.setContentType("application/octet-stream");
             client.putObject(
                 bucketName,
-                "/test.txt",
-                new ByteArrayInputStream("Hello world!".getBytes()),
-                new ObjectMetadata()
+                "test.txt",
+                new ByteArrayInputStream(data),
+                metadata
             );
-            client.setBucketAcl(bucketName, bucketAcl);
-            client.setObjectAcl(bucketName, "/test.txt", fileAcl);
+            client.setObjectAcl(bucketName, "test.txt", fileAcl);
             List<RuleConfiguration> rules = new ArrayList<>();
             Map<String, Object> options = new HashMap<>();
             options.put("scanContents", scanContents);
@@ -157,9 +166,12 @@ public class S3Test {
                 expectedResult,
                 filteredResults.get(0).compliancy
             );
+        } catch (Exception e) {
+            LoggerFactory.getLogger(this.getClass()).warn(e.getMessage(), e);
+            throw e;
         } finally {
             //Cleanup
-            client.deleteObject(new DeleteObjectRequest(bucketName, "/test.txt"));
+            client.deleteObject(new DeleteObjectRequest(bucketName, "test.txt"));
             client.deleteBucket(bucketName);
         }
     }

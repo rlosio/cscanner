@@ -22,6 +22,7 @@
         <module>core</module>
         <module>config/yaml</module>
         <module>provider/aws</module>
+        <module>provider/digitalocean</module>
         <module>provider/exoscale</module>
         <module>rule/s3</module>
         <module>rule/firewall</module>
