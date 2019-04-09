@@ -47,7 +47,7 @@ jobs:
     steps:
       - add_ssh_keys:
       - checkout
-      - run: pip install -r requirements.txt
+      - run: pip3 install -r requirements.txt
       - run: mkdocs gh-deploy
   deploy-branch:
     <<: *defaults
