@@ -5,6 +5,7 @@ import com.opsbears.cscanner.core.RuleConfiguration;
 import com.opsbears.cscanner.core.RuleResult;
 import com.opsbears.cscanner.core.ScannerCore;
 import com.opsbears.cscanner.core.ScannerCoreFactory;
+import com.opsbears.cscanner.digitalocean.DigitalOceanTestFirewallClientFactory;
 import com.opsbears.cscanner.exoscale.ExoscaleTestFirewallClientFactory;
 import com.opsbears.cscanner.s3.S3TestClientSupplier;
 import org.testng.Assert;
@@ -23,8 +24,9 @@ public class FirewallTest {
     @SuppressWarnings("unchecked")
     private static List<Class<TestFirewallClientFactory>> factories = Arrays.<Class<S3TestClientSupplier>>asList(
         new Class[]{
+            AWSTestFirewallClientFactory.class,
+            DigitalOceanTestFirewallClientFactory.class,
             ExoscaleTestFirewallClientFactory.class,
-            AWSTestFirewallClientFactory.class
         }
     );
 

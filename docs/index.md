@@ -135,6 +135,7 @@ the `connections` or `rules` key.
 Currently the following cloud providers are supported:
 
 - [Amazon Web Services](providers/aws.md)
+- [DigitalOcean](providers/digitalocean.md)
 - [Exoscale](providers/exoscale.md)
 
 ## Supported rules

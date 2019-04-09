@@ -41,10 +41,13 @@ in the repository.
 If you want to run tests that do a live fire exercise against a cloud account (e.g. Exoscale, AWS) you will have
 to provide credentials for these accounts. This can be done using the following environment variables:
 
-- `EXOSCALE_KEY`
-- `EXOSCALE_SECRET`
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
+- `DIGITALOCEAN_TOKEN`
+- `DIGITALOCEAN_SPACES_KEY`
+- `DIGITALOCEAN_SPACES_SECRET`
+- `EXOSCALE_KEY`
+- `EXOSCALE_SECRET`
 
 Additionally you can provide the `TEST_RESOURCE_PREFIX` environment variable to create resources with fixed names. This
 is not strictly necessary as the tests will do their best to clean up after themselves, but may be helpful nonetheless. 
