@@ -3,12 +3,18 @@ site_url: "https://cscanner.io/"
 repo_url: "https://github.com/janoszen/cscanner/"
 markdown_extensions:
   - admonition
+  - toc:
+      permalink: True
+      separator: "-"
 theme:
   name: readthedocs
   custom_dir: ./docs/.theme/
   include_sidebar: false
   static_templates:
     - .circleci/config.yml
+plugins:
+  - search
+  - macros
 nav:
 - 'Home': 'index.md'
 - 'Downloads': 'downloads.md'

@@ -86,7 +86,7 @@ limit the rule to only certain connections. The default is to use all connection
 If a certain cloud provider doesn't support a specific functionality, that cloud provider will be simply skipped for
 the specified rule.
 
-### Includes
+### Includes {{ since("0.0.5") }}
 
 The configuration supports includes. These includes can either be local files, or http/https URLs. Include files can
 include other files.

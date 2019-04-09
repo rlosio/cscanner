@@ -2,7 +2,7 @@
 title: DigitalOcean
 ---
 
-# DigitalOcean
+# DigitalOcean {{ since("0.0.6") }}
 
 [DigitalOcean](https://www.digitalocean.com/) (DO) is a low cost VM provider with various services.
 
