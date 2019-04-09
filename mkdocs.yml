@@ -14,6 +14,7 @@ nav:
 - 'Downloads': 'downloads.md'
 - 'Cloud providers':
   - 'Amazon Web Services': 'providers/aws.md'
+  - 'DigitalOcean': 'providers/digitalocean.md'
   - 'Exoscale': 'providers/exoscale.md'
 - 'Rules':
   - 'Firewall': 'rules/firewall.md'

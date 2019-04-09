@@ -26,7 +26,7 @@ The DO provider currently supports the following rules:
 - [Firewall](../rules/firewall.md)
 - [S3](../rules/s3.md)
 
-## Developemnt notes
+## Development notes
 
 DigitalOcean has a couple of non-trivial quirks. This section serves to document them for the future. Keep in mind that
 these are anecdotal notes and may / may no longer apply.
